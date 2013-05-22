@@ -27,27 +27,30 @@ $(EXEC): $(OBJS)
 $(OBJS): $(SRCS) 
 	$(CC) $(CFLAGS) -c $(SRCS) $(PKGFLAGS)
 
-unit: $(SRCS2) 
-	$(CC) $(CFLAGS) -c $(SRCS2) 
-	$(CC) $(CFLAGS) -o $(EXEC2) $(OBJS2) -L$(UTILDIR) $(UTILFLAG)
-unit2: $(SRCS2) 
-	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS2)
-	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC2) $(OBJS2) -L$(UTILDIR) $(UTILFLAG)
-	gdb --args queryengine_test
+#unit: $(SRCS2) 
+	#$(CC) $(CFLAGS) -c $(SRCS2) 
+	#$(CC) $(CFLAGS) -o $(EXEC2) $(OBJS2) -L$(UTILDIR) $(UTILFLAG)
+#unit2: $(SRCS2) 
+	#$(CC) $(CFLAGS) -g -ggdb -c $(SRCS2)
+	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC2) $(OBJS2) -L$(UTILDIR) $(UTILFLAG)
+	#gdb --args queryengine_test
 
 debug: $(SRCS)
-	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS)
-	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG)
-	gdb --args queryengine ../indexer_dir/index.dat ../crawler_dir/data
-debug2: $(SRCS)
-	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS)
-	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG)
+	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS) $(PKGFLAGS)
+	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG) #future library
+	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) $(PKGFLAGS)
+	gdb --args graphics
+
+#debug2: $(SRCS)
+	#$(CC) $(CFLAGS) -g -ggdb -c $(SRCS)
+	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG)
 	#gdb --args indexer ../crawler_dir/data/ index.dat index.dat index_new.dat
 
 valgrind: $(OBJS)
-	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS)
-	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG)
-	valgrind --tool=memcheck --leak-check=full ./queryengine ../indexer_dir/index.dat ../crawler_dir/data
+	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS) $(PKGFLAGS)
+	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG) #future library
+	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) $(PKGFLAGS)
+	valgrind --tool=memcheck --leak-check=full ./graphics
 
 valgrindgdb: $(OBJS)
 	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS)

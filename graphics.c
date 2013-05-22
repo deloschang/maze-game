@@ -28,13 +28,13 @@ typedef struct _matrix {
 
   static char A[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '1', 'Z', '0' } ,
+    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
     { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
-    { '1', 'Z', '1', 'Z', '0', 'Z', '0', 'Z', '1' } ,
+    { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,
     { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
-    { '0', 'Z', '1', 'Z', '1', 'Z', '1', 'Z', '0' } ,
+    { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,
     { 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '1', 'Z', '1' } ,
+    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
   };
 
@@ -50,31 +50,59 @@ void render_2D_array(int row, int column, char array[row][column]){
     }
     printf("\n");
   }
+}
+
+/**
+ *  Retrieves the char at the given row and column 
+ */
+char retrieve_field(int row, int column, char array[row][column], 
+  int chooseRow, int chooseColumn){
+  printf("sent");
+  return array[chooseRow][chooseColumn];
 
 }
 
 static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *data){
-  int       i, j, width, height;
+  int       i, j, width, height, maze_width, maze_column;
   double    value, step_x, step_y;
+  char      field;
   cairo_t  *cr;
 
   cr = gdk_cairo_create (event->window);
   width = gdk_window_get_width (event->window);
   height = gdk_window_get_height (event->window);
 
-  step_x = (double)width / MAP_WIDTH;
-  step_y = (double)height / MAP_HEIGHT;
+  // Localize the data
+  maze_width = ((matrix*)data)->row;
+  maze_column = ((matrix*)data)->column;
 
-  render_2D_array(((matrix*)data)->row, ((matrix*)data)->column, ((matrix*)data)->matrix);
+  step_x = (double)width / maze_width;
+  step_y = (double)height / maze_column;
+
+  /** EXAMPLE **/
+  // Print the 2D Array onto the console to check
+  /*render_2D_array(((matrix*)data)->row, ((matrix*)data)->column, ((matrix*)data)->matrix);*/
+  /** EXAMPLE **/
 
   // Iterate through the matrix
-  for (i = 0; i < MAP_WIDTH; i++){
-    for (j = 0; j < MAP_HEIGHT; j++){
-      value = g_random_double ();
-      cairo_set_source_rgb (cr, value, value, value);
+  for (i = 0; i < maze_width; i++){
+    for (j = 0; j < maze_column; j++){
+      // Setting color
+      /*value = g_random_double ();*/
+      /*cairo_set_source_rgb (cr, value, value, value);*/
 
-      cairo_move_to(cr, i * step_x, j * step_y);
-      cairo_line_to(cr, i * step_x, (j * step_y) + step_y);
+      // Parse the 2D Array 
+      /*printf("matrix[%c][%c]: %c", i, j, ((matrix*)data)->matrix[i][j]);*/
+      /*if (((matrix*)data)->matrix[i][j] == '1'){*/
+      field = retrieve_field(maze_width, maze_column, ((matrix*)data)->matrix, i, j);
+      if ( field == '1'){
+        cairo_move_to(cr, i * step_x, j * step_y);
+        cairo_line_to(cr, i * step_x, (j * step_y) + step_y);
+      } else if ( field == '_'){
+        cairo_move_to(cr, i * step_x, j * step_y);
+        cairo_line_to(cr, (i * step_x) + step_x, j * step_y);
+      }
+      /*}*/
 
       /*cairo_rectangle (cr, i * step_x, j * step_y, step_x, step_y);*/
       /*cairo_fill (cr);*/
