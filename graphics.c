@@ -31,7 +31,7 @@ int main(){
   int **x;
 
   /* TESTING WITH LEVEL 0 ARRAY */
-  static char A[1][9] = {
+  static char A[9][9] = {
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
     { '0', 'Z', '0', 'Z', '0', 'Z', '1', 'Z', '0' } ,
     { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
@@ -43,7 +43,7 @@ int main(){
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
   };
 
-  for (i = 0; i < 1; i++){
+  for (i = 0; i < 9; i++){
     for (int j = 0; j < 9; j++){
       printf("%c ", A[i][j]);
     }
