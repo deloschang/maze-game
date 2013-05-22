@@ -61,7 +61,7 @@ char retrieve_field(int row, int column, char array[row][column],
 }
 
 static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *data){
-  int       i, j, width, height, maze_width, maze_column, convert_step_x, convert_step_y;
+  int       i, j, width, height, maze_width, maze_column, convert_step_x, convert_step_y, x, y, flag;
   double    value, step_x, step_y;
   char      field;
   cairo_t  *cr;
@@ -87,10 +87,10 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
   /*render_2D_array(((matrix*)data)->row, ((matrix*)data)->column, ((matrix*)data)->matrix);*/
   /** EXAMPLE **/
 
-  int x = 0;
-  int y = 0 ;
+  x = 0;    // x coordinate to draw at
+  y = 0 ;   // y coordinate to draw at
 
-  int flag = 0;
+  flag = 0; // checks if it is an odd or even row in 2D array
 
   // Iterate through the matrix
   for (i = 0; i < maze_width; i++){
@@ -108,8 +108,6 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
         x += convert_step_x;
 
       } else if ( field == '1'){
-        /*cairo_move_to(cr, i * step_x, j * step_y);*/
-        /*cairo_line_to(cr, i * step_x, (j * step_y) + step_y);*/
         cairo_move_to(cr, x, y);
         cairo_line_to(cr, x, y + convert_step_y);
 
@@ -142,7 +140,6 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
     }
 
   }
-
   cairo_destroy (cr);
 
   return TRUE;
@@ -188,12 +185,6 @@ int main(int argc,  char **argv){
                             /*G_CALLBACK (gtk_widget_queue_draw), area);*/
   gtk_widget_show_all (main_window);
 
-  /*gtk_main ();*/
-
-
-  /* TESTING WITH LEVEL 0 ARRAY */
-  /*render_2D_array(LEVEL_0_ROWS, LEVEL_0_COLUMNS, A);*/
-  /* END TESTING LEVEL 0 ARRAY */
 
   gtk_main();
 
