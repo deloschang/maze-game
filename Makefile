@@ -22,7 +22,7 @@ SRCS = graphics.c
 # Commands start with TAB not spaces
 $(EXEC): $(OBJS)
 	#$(CC) $(CFLAGS) -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG)  # future library 
-	$(CC) $(CFLAGS) -o $(EXEC) $(OBJS) 
+	$(CC) $(CFLAGS) -o $(EXEC) $(OBJS) $(PKGFLAGS)
 	./graphics
 $(OBJS): $(SRCS) 
 	$(CC) $(CFLAGS) -c $(SRCS) $(PKGFLAGS)
