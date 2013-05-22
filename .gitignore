@@ -11,6 +11,10 @@
 *.so.*
 *.dylib
 
+# Other
+*.c~
+*.h~
+
 # Executables
 *.exe
 *.out
