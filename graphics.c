@@ -20,6 +20,7 @@
 #define MAP_HEIGHT 50
 
 /* --- Structures / Types --- */
+// Example struct to pass into the graphics function.
 typedef struct _matrix {
   int row;
   int column;
@@ -115,6 +116,10 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
   return TRUE;
 }
 
+/**
+ * Function that will take in a 2D Array and update the graphics
+ * Refactoring required
+ **/
 int main(int argc,  char **argv){
   GtkWidget *main_window,
             *vbox,
@@ -151,7 +156,7 @@ int main(int argc,  char **argv){
                             /*G_CALLBACK (gtk_widget_queue_draw), area);*/
   gtk_widget_show_all (main_window);
 
-  gtk_main ();
+  /*gtk_main ();*/
 
 
   /* TESTING WITH LEVEL 0 ARRAY */
