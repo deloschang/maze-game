@@ -19,20 +19,29 @@
 #define MAP_WIDTH  50
 #define MAP_HEIGHT 50
 
-// Use dynamically allocated array of pointers to dynamically
-// allocated arrays because the array bounds are not yet known 
-// during compilation
-/*void func(int** array, int rows, int cols){*/
-  /*int i, j;*/
+/* --- Structures / Types --- */
+typedef struct _matrix {
+  int row;
+  int column;
+  char** matrix;
+} matrix;
 
-  /*for (i = 0; i<rows; i++){*/
-    /*for (j = 0; j<cols; j++){*/
-      /*array[i][j] = i*j;*/
-    /*}*/
-  /*}*/
-/*}*/
+  static char A[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
+    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+    { '0', 'Z', '0', 'Z', '0', 'Z', '1', 'Z', '0' } ,
+    { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
+    { '1', 'Z', '1', 'Z', '0', 'Z', '0', 'Z', '1' } ,
+    { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
+    { '0', 'Z', '1', 'Z', '1', 'Z', '1', 'Z', '0' } ,
+    { 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'E' } ,
+    { '0', 'Z', '0', 'Z', '0', 'Z', '1', 'Z', '1' } ,
+    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+  };
 
-// Takes a 2D array and renders it graphically
+
+/**
+ * Takes the 2D Array and prints it onto the terminal
+ */
 void render_2D_array(int row, int column, char array[row][column]){
   // Print the level 0 array
   for (int i = 0; i < row; i++){
@@ -55,6 +64,8 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
 
   step_x = (double)width / MAP_WIDTH;
   step_y = (double)height / MAP_HEIGHT;
+
+  render_2D_array(((matrix*)data)->row, ((matrix*)data)->column, ((matrix*)data)->matrix);
 
   // Iterate through the matrix
   for (i = 0; i < MAP_WIDTH; i++){
@@ -79,7 +90,7 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
 int main(int argc,  char **argv){
   GtkWidget *main_window,
             *vbox,
-            *button,
+            /**button,*/
             *area;
 
   gtk_init (&argc, &argv);
@@ -91,67 +102,38 @@ int main(int argc,  char **argv){
   vbox = gtk_vbox_new (FALSE, 5);
   gtk_container_add (GTK_CONTAINER (main_window), vbox);
 
-  button = gtk_button_new_from_stock (GTK_STOCK_REFRESH);
-  gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
+  /*button = gtk_button_new_from_stock (GTK_STOCK_REFRESH);*/
+  /*gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);*/
 
   area = gtk_drawing_area_new ();
-  g_signal_connect (area, "expose-event", G_CALLBACK (cb_expose), NULL);
+
+  /* Start drawing the 2D array here */
+  // Example use of the Matrix Structure to pass into g_signal_connect
+  matrix *data = malloc(sizeof(matrix));
+  data->row = LEVEL_0_ROWS;
+  data->column = LEVEL_0_COLUMNS;
+  data->matrix = (char**)A;
+
+  g_signal_connect (area, "expose-event", G_CALLBACK (cb_expose), data);
   gtk_box_pack_start (GTK_BOX (vbox), area, TRUE, TRUE, 0);
 
   /* Connect refresh button (we need pointer to drawing area, this is
    * why connection is delayed until here). */
-  g_signal_connect_swapped (button, "clicked",
-                            G_CALLBACK (gtk_widget_queue_draw), area);
-
+  /*g_signal_connect_swapped (button, "clicked",*/
+                            /*G_CALLBACK (gtk_widget_queue_draw), area);*/
   gtk_widget_show_all (main_window);
 
   gtk_main ();
 
 
   /* TESTING WITH LEVEL 0 ARRAY */
-  static char A[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
-    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '1', 'Z', '0' } ,
-    { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
-    { '1', 'Z', '1', 'Z', '0', 'Z', '0', 'Z', '1' } ,
-    { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
-    { '0', 'Z', '1', 'Z', '1', 'Z', '1', 'Z', '0' } ,
-    { 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '1', 'Z', '1' } ,
-    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-  };
+  /*render_2D_array(LEVEL_0_ROWS, LEVEL_0_COLUMNS, A);*/
+  /* END TESTING LEVEL 0 ARRAY */
 
-  // Print the level 0 array
-  render_2D_array(LEVEL_0_ROWS, LEVEL_0_COLUMNS, A);
+  gtk_main();
 
-  gtk_main ();
-  /*for (i = 0; i < LEVEL_0_ROWS; i++){*/
-    /*for (int j = 0; j < LEVEL_0_COLUMNS; j++){*/
-      /*printf("%c ", A[i][j]);*/
-    /*}*/
-    /*printf("\n");*/
-  /*}*/
-
-  // Send array to graphics module to render
-
-
-  /* DYNAMIC MEMORY ALLOCATION FOR THE 2D ARRAY */
-  // Allocate memory for the the array 
-  /*x = malloc(rows * sizeof *x);*/
-  /*for (i = 0; i<rows; i++){*/
-    /*x[i] = malloc(cols * sizeof *x[i]);*/
-  /*}*/
-
-  // Use the array 
-  /*func(x, rows, cols);*/
-
-
-  // Deallocate the array for cleanup
-  /*for (i=0; i<rows; i++) {*/
-    /*free(x[i]);*/
-  /*}*/
-
-  /*free(x);*/
+  // Clean up 
+  free(data);
   return 0;
 }
 
