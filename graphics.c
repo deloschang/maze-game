@@ -6,25 +6,7 @@
 #include <stdlib.h>                          // for calloc
 #include <string.h>                          // for strlen
 #include <gtk/gtk.h>                         // for gtk functionality
-
-//! Zero out the 2D array
-#define BZEROARRAY(array,n,m)  memset(array, 0, sizeof(array[0][0]) * m * n)
-#define convertBack(n)  (n+1)/2
-#define convertForward(n)  (2*n)+1
-
-#define WINDOW_WIDTH 600  
-#define WINDOW_HEIGHT 600  
-
-#define LEVEL_0_ROWS 9  // (2n+1) adjustment 
-#define LEVEL_0_COLUMNS 9
-
-/* --- Structures / Types --- */
-// Example struct to pass into the graphics function.
-typedef struct _matrix {
-  int row;
-  int column;
-  char** matrix;
-} matrix;
+#include "header.h"                         // for gtk functionality
 
   static char A[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
@@ -37,7 +19,6 @@ typedef struct _matrix {
     { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
   };
-
 
 /**
  * Takes the 2D Array and prints it onto the terminal
@@ -61,8 +42,8 @@ char retrieve_field(int row, int column, char array[row][column],
 }
 
 static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *data){
-  int       i, j, width, height, maze_width, maze_column, convert_step_x, convert_step_y, x, y, flag;
-  double    value, step_x, step_y;
+  int       i, j, width, height, maze_width, maze_column, x, y, flag;
+  double    value, convert_step_x, convert_step_y;
   char      field;
   cairo_t  *cr;
 
@@ -73,10 +54,6 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
   // Localize the data
   maze_width = ((matrix*)data)->row;
   maze_column = ((matrix*)data)->column;
-
-  // converting to 2D array width / height (e.g. Level 0 would be 9 rows)
-  step_x = (double)width / maze_width;
-  step_y = (double)height / maze_column;
 
   // converting back to maze width / height (e.g. Level 0 maze would be 5 rows)
   convert_step_x = (double)width / (convertBack(maze_width));
