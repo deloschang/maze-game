@@ -69,6 +69,7 @@ clean:
 	rm -f core.*
 	rm -f vgcore.*
 	rm -f .nfs*
+	rm -f graphics
 
 cleanlog:
 	rm -f *log.*
