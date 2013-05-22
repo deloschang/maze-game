@@ -24,6 +24,7 @@ $(EXEC): $(OBJS)
 	#$(CC) $(CFLAGS) -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG)  # future library 
 	$(CC) $(CFLAGS) -o $(EXEC) $(OBJS) $(PKGFLAGS)
 	./graphics
+	make clean
 $(OBJS): $(SRCS) 
 	$(CC) $(CFLAGS) -c $(SRCS) $(PKGFLAGS)
 

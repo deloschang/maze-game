@@ -16,6 +16,7 @@
 *.h~
 
 # Executables
+graphics
 *.exe
 *.out
 *.app
