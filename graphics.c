@@ -10,7 +10,7 @@
 //! Zero out the 2D array
 #define BZEROARRAY(array,n,m)  memset(array, 0, sizeof(array[0][0]) * m * n)
 #define convertBack(n)  (n+1)/2
-#define convertForward(n)  (2*n)-1
+#define convertForward(n)  (2*n)+1
 
 #define WINDOW_WIDTH 600  
 #define WINDOW_HEIGHT 600  
@@ -114,9 +114,11 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
       } else if ( field == '_'){
         // Check to see if it is an odd or even row
         if ( flag == 0){
+          // Odd Row
           cairo_move_to(cr, x, y + convert_step_y); // start from bottom
           cairo_line_to(cr, x + convert_step_x, y + convert_step_y);
         } else {
+          // Even Row
           cairo_move_to(cr, x, y); // start from top
           cairo_line_to(cr, x + convert_step_x, y);
         }
@@ -175,6 +177,8 @@ int main(int argc,  char **argv){
   data->row = LEVEL_0_ROWS;
   data->column = LEVEL_0_COLUMNS;
   data->matrix = (char**)A;
+
+  /* END SAMPLE */
 
   g_signal_connect (area, "expose-event", G_CALLBACK (cb_expose), data);
   gtk_box_pack_start (GTK_BOX (vbox), area, TRUE, TRUE, 0);
