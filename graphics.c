@@ -16,22 +16,31 @@
 // Use dynamically allocated array of pointers to dynamically
 // allocated arrays because the array bounds are not yet known 
 // during compilation
-void func(int** array, int rows, int cols){
-  int i, j;
+/*void func(int** array, int rows, int cols){*/
+  /*int i, j;*/
 
-  for (i = 0; i<rows; i++){
-    for (j = 0; j<cols; j++){
-      array[i][j] = i*j;
+  /*for (i = 0; i<rows; i++){*/
+    /*for (j = 0; j<cols; j++){*/
+      /*array[i][j] = i*j;*/
+    /*}*/
+  /*}*/
+/*}*/
+
+// Takes a 2D array and renders it graphically
+void render_2D_array(int row, int column, char array[row][column]){
+  // Print the level 0 array
+  for (int i = 0; i < row; i++){
+    for (int j = 0; j < column; j++){
+      printf("%c ", array[i][j]);
     }
+    printf("\n");
   }
+
 }
 
 int main(){
-  int rows, cols, i;
-  int **x;
-
   /* TESTING WITH LEVEL 0 ARRAY */
-  static char A[9][9] = {
+  static char A[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
     { '0', 'Z', '0', 'Z', '0', 'Z', '1', 'Z', '0' } ,
     { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
@@ -43,12 +52,17 @@ int main(){
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
   };
 
-  for (i = 0; i < 9; i++){
-    for (int j = 0; j < 9; j++){
-      printf("%c ", A[i][j]);
-    }
-    printf("\n");
-  }
+  // Print the level 0 array
+  render_2D_array(LEVEL_0_ROWS, LEVEL_0_COLUMNS, A);
+  /*for (i = 0; i < LEVEL_0_ROWS; i++){*/
+    /*for (int j = 0; j < LEVEL_0_COLUMNS; j++){*/
+      /*printf("%c ", A[i][j]);*/
+    /*}*/
+    /*printf("\n");*/
+  /*}*/
+
+  // Send array to graphics module to render
+
 
   /* DYNAMIC MEMORY ALLOCATION FOR THE 2D ARRAY */
   // Allocate memory for the the array 
@@ -60,7 +74,6 @@ int main(){
   // Use the array 
   /*func(x, rows, cols);*/
 
-  // Send array to graphics module to render
 
   // Deallocate the array for cleanup
   /*for (i=0; i<rows; i++) {*/
