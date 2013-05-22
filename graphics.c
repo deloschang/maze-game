@@ -9,6 +9,7 @@
 
 //! Zero out the 2D array
 #define BZEROARRAY(array,n,m)  memset(array, 0, sizeof(array[0][0]) * m * n)
+#define convertBack(n)  (n+1)/2
 
 #define WINDOW_WIDTH 600  
 #define WINDOW_HEIGHT 600  
@@ -55,9 +56,7 @@ void render_2D_array(int row, int column, char array[row][column]){
  */
 char retrieve_field(int row, int column, char array[row][column], 
   int chooseRow, int chooseColumn){
-  printf("sent");
   return array[chooseRow][chooseColumn];
-
 }
 
 static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *data){
@@ -91,7 +90,6 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
 
       // Parse the 2D Array 
       /*printf("matrix[%c][%c]: %c", i, j, ((matrix*)data)->matrix[i][j]);*/
-      /*if (((matrix*)data)->matrix[i][j] == '1'){*/
       field = retrieve_field(maze_width, maze_column, ((matrix*)data)->matrix, i, j);
       if ( field == '1'){
         cairo_move_to(cr, i * step_x, j * step_y);
@@ -100,7 +98,6 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
         cairo_move_to(cr, i * step_x, j * step_y);
         cairo_line_to(cr, (i * step_x) + step_x, j * step_y);
       }
-      /*}*/
 
       /*cairo_rectangle (cr, i * step_x, j * step_y, step_x, step_y);*/
       /*cairo_fill (cr);*/
@@ -140,8 +137,8 @@ int main(int argc,  char **argv){
   /* Start drawing the 2D array here */
   // Example use of the Matrix Structure to pass into g_signal_connect
   matrix *data = malloc(sizeof(matrix));
-  data->row = LEVEL_0_ROWS;
-  data->column = LEVEL_0_COLUMNS;
+  data->row = convertBack(LEVEL_0_ROWS);
+  data->column = convertBack(LEVEL_0_COLUMNS);
   data->matrix = (char**)A;
 
   g_signal_connect (area, "expose-event", G_CALLBACK (cb_expose), data);
