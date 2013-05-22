@@ -16,9 +16,6 @@
 #define LEVEL_0_ROWS 9  // (2n+1) adjustment 
 #define LEVEL_0_COLUMNS 9
 
-#define MAP_WIDTH  50
-#define MAP_HEIGHT 50
-
 /* --- Structures / Types --- */
 // Example struct to pass into the graphics function.
 typedef struct _matrix {

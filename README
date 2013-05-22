@@ -3,3 +3,4 @@ This is the initial README for the Amazing Project
 
 To run gtk: gcc -Wall -g helloworld.c -o helloworld `pkg-config --cflags gtk+-2.0 --libs gtk+-2.0`
 
+To run with X11 forwarding (to enable graphics): ssh -Y -l user@server
