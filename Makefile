@@ -87,6 +87,7 @@ clean:
 	rm -f .nfs*
 	rm -f graphics
 	rm -f startup
+	rm -f algo
 
 cleanlog:
 	rm -f *log.*

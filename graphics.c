@@ -20,6 +20,55 @@
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
   };
 
+  // Example 2D array with avatar
+  static char A_WITH_AVATAR[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
+    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
+    { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
+    { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,
+    { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
+    { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,
+    { 'E', '0', 'E', '1', 'A', '0', 'E', '0', 'E' } ,
+    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
+    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+  };
+
+  // Another simulation of avatar moving
+  static char A_WITH_AVATAR_TWO[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
+    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
+    { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
+    { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,
+    { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
+    { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,
+    { 'E', '0', 'E', '1', 'E', '0', 'A', '0', 'E' } ,
+    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
+    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+  };
+
+  // Another simulation of avatar moving
+  static char A_WITH_AVATAR_THREE[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
+    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
+    { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
+    { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,
+    { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
+    { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,
+    { 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'A' } ,
+    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
+    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+  };
+
+// Shared map (struct) between all the avatars
+GtkWidget *main_window;
+    GtkWindow* vbox,
+            /**button,*/
+            *area;
+matrix* data;
+
+// Simulation Flag
+int flag = 0; // used to simulate avatar moving in sep thread
+
 /**
  * Takes the 2D Array and prints it onto the terminal
  */
@@ -99,6 +148,14 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
           cairo_move_to(cr, x, y); // start from top
           cairo_line_to(cr, x + convert_step_x, y);
         }
+      } else if ( field == 'A'){
+        // Draw the avatar
+        // Temporary rectangle / change later
+
+        cairo_rectangle (cr, x, y, convert_step_x, convert_step_y);
+        cairo_fill (cr);
+
+        x += convert_step_x;
       }
 
       /*cairo_rectangle (cr, i * step_x, j * step_y, step_x, step_y);*/
@@ -124,17 +181,16 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
   return TRUE;
 }
 
-/**
- * Function that will take in a 2D Array and update the graphics
- **/
-int main(int argc,  char **argv){
-  GtkWidget *main_window,
-            *vbox,
-            /**button,*/
-            *area;
 
-  gtk_init (&argc, &argv);
+gboolean timer_tic(gpointer data){
+  gtk_widget_queue_draw(area);
 
+  return TRUE;
+}
+
+// 0 flag for new
+// 1 flag for update
+void render_maze(){
   main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size (GTK_WINDOW (main_window), 600, 600);
   g_signal_connect (main_window, "destroy", gtk_main_quit, NULL);
@@ -147,15 +203,6 @@ int main(int argc,  char **argv){
 
   area = gtk_drawing_area_new ();
 
-  /* Start drawing the 2D array here */
-  // Example use of the Matrix Structure to pass into g_signal_connect
-  matrix *data = malloc(sizeof(matrix));
-  data->row = LEVEL_0_ROWS;
-  data->column = LEVEL_0_COLUMNS;
-  data->matrix = (char**)A;
-
-  /* END SAMPLE */
-
   g_signal_connect (area, "expose-event", G_CALLBACK (cb_expose), data);
   gtk_box_pack_start (GTK_BOX (vbox), area, TRUE, TRUE, 0);
 
@@ -163,13 +210,73 @@ int main(int argc,  char **argv){
    * why connection is delayed until here). */
   /*g_signal_connect_swapped (button, "clicked",*/
                             /*G_CALLBACK (gtk_widget_queue_draw), area);*/
-  gtk_widget_show_all (main_window);
 
+  // start a timeout with interval
+  gint timer = g_timeout_add_seconds(1, timer_tic, NULL);
+
+  gtk_widget_show_all (main_window);
 
   gtk_main();
 
   // Clean up 
+  g_source_remove(timer);
   free(data);
+}
+
+// Simulates the moving avatars
+void* print_i(void *ptr){
+  while (1){
+    if (flag == 0){
+      data->row = LEVEL_0_ROWS;
+      data->column = LEVEL_0_COLUMNS;
+      data->matrix = (char**)A_WITH_AVATAR;
+
+      flag = 1;
+    } else if ( flag == 1 ){
+      data->row = LEVEL_0_ROWS;
+      data->column = LEVEL_0_COLUMNS;
+      data->matrix = (char**)A_WITH_AVATAR_TWO;
+
+      flag = 2;
+    } else if (flag == 2){
+      data->row = LEVEL_0_ROWS;
+      data->column = LEVEL_0_COLUMNS;
+      data->matrix = (char**)A_WITH_AVATAR_THREE;
+
+
+      flag = 0;
+    }
+
+  }
+}
+
+/**
+ * Function that will take in a 2D Array and update the graphics
+ **/
+int main(int argc,  char **argv){
+  // (1) Init the GTK with arguments
+  gtk_init (&argc, &argv);
+
+  // Example use of the Matrix Structure 
+  data = malloc(sizeof(matrix));
+  data->row = LEVEL_0_ROWS;
+  data->column = LEVEL_0_COLUMNS;
+  data->matrix = (char**)A;
+
+
+  // Simulates the avatars moving
+  pthread_t t1;
+  int iret1 = pthread_create(&t1, NULL, print_i, NULL);
+  if (iret1) {
+    fprintf(stderr, 
+        "pthread_create failed, rc=%d\n",iret1);
+    exit(iret1);
+  }  
+
+  // (2) Start the maze  that takes from the global MAZE
+  render_maze();
+
+
   return 0;
 }
 
