@@ -126,7 +126,6 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
 
 /**
  * Function that will take in a 2D Array and update the graphics
- * Refactoring required
  **/
 int main(int argc,  char **argv){
   GtkWidget *main_window,

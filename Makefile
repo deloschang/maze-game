@@ -6,11 +6,12 @@ CFLAGS1 = -Wall
 PKGFLAGS = `pkg-config --cflags gtk+-2.0 --libs gtk+-2.0`
 
 EXEC = graphics
-LDFLAGS = 
-
-# query engine details
 OBJS = graphics.o
 SRCS = graphics.c 
+
+EXEC2 = startup
+OBJS2 = AMStartup.o
+SRCS2 = AMStartup.c 
 
 # Future library details
 #UTILDIR=../utils/
@@ -35,6 +36,11 @@ $(OBJS): $(SRCS)
 	#$(CC) $(CFLAGS) -g -ggdb -c $(SRCS2)
 	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC2) $(OBJS2) -L$(UTILDIR) $(UTILFLAG)
 	#gdb --args queryengine_test
+
+$(EXEC2): $(OBJS)
+	$(CC) $(CFLAGS) -o $(EXEC2) $(OBJS2)
+$(OBJS2): $(SRCS2) 
+	$(CC) $(CFLAGS) -c $(SRCS2) 
 
 debug: $(SRCS)
 	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS) $(PKGFLAGS)
@@ -71,6 +77,7 @@ clean:
 	rm -f vgcore.*
 	rm -f .nfs*
 	rm -f graphics
+	rm -f startup
 
 cleanlog:
 	rm -f *log.*
