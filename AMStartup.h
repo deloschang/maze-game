@@ -6,10 +6,15 @@ void retrieve_arguments(int argc,char* argv[],char* host,char* avatars,
 								char* diff);
 
 void create_shared_map(int w,int h);
+//shared_map* get_shared_map();
 
 #define MAX_DIM 200
 
 typedef struct _shared_map{
-    int map[MAX_DIM][MAX_DIM];
+    int row;
+    int col;
+    int map[row][col];
 
 } shared_map;
+
+shared_map* get_shared_map();

@@ -151,9 +151,9 @@ int main(int argc,char* argv[]){
     //printf("%s\n",serverIP);
     //printf("%d\n",ntohl(recvline->message_type));
     //printf("%d\n",AM_INITIALIZE);
-    //printf("%d\n",width);
-    //printf("%d\n",height);
-    //printf("%d\n",maze_port);
+    printf("%d\n",width);
+    printf("%d\n",height);
+    printf("%d\n",maze_port);
 
 
     //Creating shared map object
@@ -162,7 +162,7 @@ int main(int argc,char* argv[]){
 
     //done with the recvline message
     free(recvline);   
-    //return 1;//testing
+    return 1;//testing
     //preparing to create a log file
     char logFileCommand[AM_MAX_MESSAGE];
     BZERO(logFileCommand,AM_MAX_MESSAGE);
@@ -244,6 +244,30 @@ int main(int argc,char* argv[]){
 
 }
 
+shared_map* get_shared_map(){
+    void *shared_memory=(void*)0;
+    shared_map *sh_map;
+
+    int shmid;
+    shmid=shmget((key_t)1323,sizeof(shared_map),0666 | IPC_CREAT);
+
+    if (shmid ==-1){
+        printf("failed to get shared memory\n");
+        exit(1);
+
+    }
+
+    shared_memory=shmat(shmid,(void*)0,0);
+    if (shared_memory == (void*)-1){
+        printf("shmat command failed\n");
+        exit(1);
+    }
+
+    sh_map=(shared_map*)shared_memory;
+ 
+    return sh_map;
+}
+
 void create_shared_map(int w,int h){
     void *shared_memory=(void*)0;
     shared_map *sh_map;
@@ -264,17 +288,20 @@ void create_shared_map(int w,int h){
     }
 
     sh_map=(shared_map*)shared_memory;
-    
-    for (int i=0;i<2*w-1;i++){
-	for (int j=0;j<2*h-1;j++){
-	    if (i % 2!=0 && j % 2 !=0){
-		sh_map->map[i][j]=3;
-	    }else if (i % 2!=0 && j % 2==0){
-		sh_map->map[i][j]=9;
-	    }else if (i % 2==0 && j % 2!=0){
-		sh_map->map[i][j]=9;
+    sh_map->row=2*h-1;
+    sh_map->col=2*w-1;   
+ 
+    for (int i=0;i<2*h-1;i++){
+	for (int j=0;j<2*w-1;j++){
+	    if ( i % 2==0
+			 && j % 2 ==0){
+		sh_map->map[i][j]=3;//E
+	    }else if (i % 2==0 && j % 2!=0 ){
+		sh_map->map[i][j]=9;//Unknown wall even row
+	    }else if (i % 2!=0 && j % 2==0){ 
+		sh_map->map[i][j]=9;//Unknown wall even col
 	    }else if (i % 2==0 && j % 2==0){
-		sh_map->map[i][j]=2;
+		sh_map->map[i][j]=2;//Z
 	    }
 
 	}
