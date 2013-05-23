@@ -38,6 +38,8 @@
 #include "amazing.h"
 #include "amazing_client.h"
 #include <unistd.h>
+#include "header.h"
+//#include "algorithm.h"
 //#include <sys/sem.h>
 
 //static int set_semvalue(void);
@@ -48,6 +50,8 @@
 //static int sem_id;
 
 int main(int argc,char* argv[]){
+    //extern matrix* data;
+
     int avatar_id=atoi(argv[1]);
     int nAvatars=atoi(argv[2]);
     int maze_diff=atoi(argv[3]);
@@ -103,8 +107,9 @@ int main(int argc,char* argv[]){
 	return 1;
     }
 
-    int turn_num=ntohl(recvline->msg.TurnId);
-    XYPOS init_pos=recvline->msg.Pos[avatar_id];
+    int turn_num=ntohl(recvline->msg.avatar_turn.TurnId);
+    XYPOS* init_pos;//=malloc(sizeof(XYPOS));
+    init_pos=&(recvline->msg.avatar_turn.Pos[avatar_id]);
 
     //add semaphore (not using for the moment)
     
@@ -122,6 +127,12 @@ int main(int argc,char* argv[]){
 	}
 	counter++;
     } 
+
+    //FOR GRAPHICS
+    //if (avatar_id==0){
+    //	data=convert_map();
+    //    render_maze();
+    //}
 
     XYPOS* goal=NULL;
     matrix* mat=NULL;
@@ -171,12 +182,12 @@ int main(int argc,char* argv[]){
 		//char maze_solved[AM_MAX_MESSAGE];
 		//BZERO(maze_solved,AM_MAX_MESSAGE);
 		//strncpy(maze_solved,
-		FILE fp*=fopen(log_file,"a");
+		FILE* fp=fopen(log_file,"a");
                 if (fp!=NULL){
-		    fprintf(fp,"%d,"recvline->msg.maze_solved.Difficulty);
-		    fprintf(fp,"%d," recvline->msg.maze_solved.nAvatars);
-		    fprintf(fp,"%d," recvline->msg.maze_solved.nMoves);
-		    fprintf(fp,"%d," recvline->msg.maze_solved.Hash);
+		    fprintf(fp,"%d,",recvline->msg.maze_solved.Difficulty);
+		    fprintf(fp,"%d,", recvline->msg.maze_solved.nAvatars);
+		    fprintf(fp,"%d,", recvline->msg.maze_solved.nMoves);
+		    fprintf(fp,"%d,", recvline->msg.maze_solved.Hash);
 		    fclose(fp);
 		}else{
 		    printf("failed to open log file\n");
@@ -192,7 +203,7 @@ int main(int argc,char* argv[]){
 	    }
 
 	    if (ntohl(recvline->message_type)==AM_AVATAR_TURN && condition==1){
-	        XYPOS* new_pos=recvline->msg.avatar_turn.Pos[avatar_id];
+	        XYPOS* new_pos=&(recvline->msg.avatar_turn.Pos[avatar_id]);
 	        if (new_pos->xPos==cur_pos->xPos
 			&& new_pos->yPos==cur_pos->yPos){
 		    //mark as wall
@@ -201,20 +212,24 @@ int main(int argc,char* argv[]){
 		         wall->xPos=wall->xPos-1;
 		         mark_as_wall(wall);
 		    }else if (next_move==M_NORTH){
-		        wall->yPos+=-1;
+		        wall->yPos=wall->yPos-1;
 		        mark_as_wall(wall);
 		    }else if (next_move==M_SOUTH){
 		        wall->yPos=wall->yPos+1;
   		        mark_as_wall(wall);
 		    }else if (next_move==M_EAST){
-		        wall->xPos+=1;
+		        wall->xPos=wall->xPos+1;
 		        mark_as_wall(wall);
 		    }
 	         }else{
 	            update_shared_map(cur_pos,new_pos);
-		    //ALSO UPDATE GRAPHICS (add later)
+
 		    cur_pos=new_pos;
 	         }
+
+		 //FOR GRAPHICS
+		 //free(data);
+		 //data=convert_map();
 	         char coord[50];
 	         BZERO(coord,50);
 	         snprintf(coord,50,"%d",cur_pos->xPos);
@@ -253,7 +268,7 @@ int main(int argc,char* argv[]){
 
 	    if (ntohl(recvline->message_type)==AM_MAZE_SOLVED ||
 	       ntohl(recvline->message_type)==AM_SERVER_TIMEOUT ||
-		ntohl(recvline->message_type)==AM_AVATAR_TOO_MANY_MOVES){
+		ntohl(recvline->message_type)==AM_TOO_MANY_MOVES){
 		condition=0;
 	    }
 	
@@ -272,7 +287,7 @@ int main(int argc,char* argv[]){
     free(mat);
     free(recvline);
     free(sendline);
-
+    free(data);
     
     //free shared map
     free_shared_memory();
@@ -285,7 +300,7 @@ matrix* convert_map(){
     matrix* mat=malloc(sizeof(matrix));
     MALLOC_CHECK(mat);
     mat->row=sh_map->row;
-    mat->col=sh_map->col;
+    mat->column=sh_map->col;
     char child_mat[sh_map->row][sh_map->col];
     for (int i=0;i<sh_map->row;i++){
 	BZERO(child_mat[i],sh_map->col);
@@ -332,7 +347,7 @@ XYPOS* get_average(){
     int count=0;
     for (int i=0;sh_map->row;i++){
 	for (int j=0;j<sh_map->col;j++){
-	     if (sh_map[i][j]==7){
+	     if (sh_map->map[i][j]==7){
 		sum_x+=j;
 		sum_y+=i;
 		count++;
@@ -387,7 +402,7 @@ shared_map* get_shared_map(){
 
 void free_shared_memory(){
     void *shared_memory=(void*)0;
-    shared_map *sh_map;
+    //shared_map *sh_map;
 
     int shmid;
     shmid=shmget((key_t)1323,sizeof(shared_map),0666);// | IPC_CREAT);
@@ -405,8 +420,8 @@ void free_shared_memory(){
 	exit(1);
     }
 
-    if (shmct1(schmid,IPC_RMID,0)==-1){
-	printf("shmct1 failed\n");
+    if (shmctl(shmid,IPC_RMID,0)==-1){
+	printf("shmctl failed\n");
 	exit(1);
     }
 

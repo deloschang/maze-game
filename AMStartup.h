@@ -13,7 +13,7 @@ void create_shared_map(int w,int h);
 typedef struct _shared_map{
     int row;
     int col;
-    int map[row][col];
+    int map[MAX_DIM][MAX_DIM];
 
 } shared_map;
 

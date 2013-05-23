@@ -158,11 +158,11 @@ int main(int argc,char* argv[]){
 
     //Creating shared map object
 
-    //create_shared_map(width,height);
+    create_shared_map(width,height);
 
     //done with the recvline message
     free(recvline);   
-    return 1;//testing
+    //return 1;//testing
     //preparing to create a log file
     char logFileCommand[AM_MAX_MESSAGE];
     BZERO(logFileCommand,AM_MAX_MESSAGE);
