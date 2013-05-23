@@ -13,6 +13,10 @@ EXEC2 = startup
 OBJS2 = AMStartup.o
 SRCS2 = AMStartup.c 
 
+EXEC3 = algo
+OBJS3 = algorithm.o
+SRCS3 = algorithm.c 
+
 # Future library details
 #UTILDIR=../utils/
 #UTILFLAG=-ltseutil
@@ -37,10 +41,15 @@ $(OBJS): $(SRCS)
 	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC2) $(OBJS2) -L$(UTILDIR) $(UTILFLAG)
 	#gdb --args queryengine_test
 
-$(EXEC2): $(OBJS)
+$(EXEC2): $(OBJS2)
 	$(CC) $(CFLAGS) -o $(EXEC2) $(OBJS2)
 $(OBJS2): $(SRCS2) 
 	$(CC) $(CFLAGS) -c $(SRCS2) 
+
+$(EXEC3): $(OBJS3)
+	$(CC) $(CFLAGS) -o $(EXEC3) $(OBJS3)
+$(OBJS3): $(SRCS3) 
+	$(CC) $(CFLAGS) -c $(SRCS3) 
 
 debug: $(SRCS)
 	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS) $(PKGFLAGS)

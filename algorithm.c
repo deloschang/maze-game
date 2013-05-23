@@ -13,8 +13,9 @@ int heursitic_function(XYPOS *start, XYPOS *end, matrix *map);
 int valid_pos(XYPOS *pos, matrix *map);
 int check_move(XYPOS *pos, XYPOS *end, int direction, matrix *map);
 int find_move(XYPOS *start, XYPOS *end, matrix *map);
+
 int main (){
- 
+
   XYPOS *test;
   test = (XYPOS *)malloc(sizeof(XYPOS));
   test->xPos = 1;
@@ -24,16 +25,16 @@ int main (){
   end = (XYPOS *)malloc(sizeof(XYPOS));
   end->xPos = 4;
   end->yPos = 3;
-  
+
   matrix *map = (matrix *)malloc(sizeof(matrix));
   map->row = 9;
   map->column = 9;
   //map->matrix = A;
 
-  
+
   int a = -1;
   a = find_move(test,end,map);
-  
+
   printf ("direction is %d\n", a);
 
   free(test);
@@ -47,8 +48,8 @@ int find_move (XYPOS *start, XYPOS *end, matrix *map){
   int score=0;
   int best_move;
   int best_score = 10000;//fix
-  
-  
+
+
   //check all directions (0 = W, 1 = N, 2 = S, 3 = E)
   for (int i = 0; i < 4; i ++) { 
     score = check_move(start, end, i, map);
@@ -58,17 +59,17 @@ int find_move (XYPOS *start, XYPOS *end, matrix *map){
       best_move = i;
     }
   } 
-  
+
   if (best_score == 10000)
     return -1;
   else
     return best_move;
-  
+
 }
 
 int heuristic_function(XYPOS *start, XYPOS *end, matrix *map) {
   return (abs(start->xPos - end->xPos * 2) + abs(start->yPos - end->yPos * 2));
-    
+
 }
 
 int valid_pos(XYPOS *pos, matrix *map) {
@@ -134,5 +135,5 @@ int check_move(XYPOS *pos, XYPOS *end, int direction, matrix *map){
     free (move);
     return score;
   }
-  
+
 }
