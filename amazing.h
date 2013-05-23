@@ -140,3 +140,4 @@ typedef struct _AM_Message
 /* ---------------- Prototypes/Macros */
 
 #endif /* amazing_H */
+
