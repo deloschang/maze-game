@@ -116,7 +116,7 @@ int main(int argc,char* argv[]){
 
     //--------
     int counter=turn_num;
-    for (int i=;i<AM_MAX_AVATAR;i++){
+    for (int i=0;i<AM_MAX_AVATAR;i++){
 	if (counter==avatar_id){
 	     update_shared_map(NULL,init_pos);
 	}
@@ -288,13 +288,13 @@ matrix* convert_map(){
     mat->col=sh_map->col;
     char child_mat[sh_map->row][sh_map->col];
     for (int i=0;i<sh_map->row;i++){
-	BZERO(child_mat,sh_map->col);
+	BZERO(child_mat[i],sh_map->col);
 	for (int j=0;j<sh_map->col;j++){
 	    if (i % 2==0 && j % 2==0){
 		if (sh_map->map[i][j]==7){
 		     child_mat[i][j]='.';
 		}else{
-		     child_mat[i][j]='7';
+		     child_mat[i][j]='E';
 		}
 	    }else if (i % 2==0 && j % 2!=0){
 		if (sh_map->map[i][j]==1){
