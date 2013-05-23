@@ -8,6 +8,10 @@
 #include <gtk/gtk.h>                         // for gtk functionality
 #include "header.h"                         // for gtk functionality
 
+  // Global map struct should go here. 
+    matrix* data;
+  // Call render_maze() once and it will rerender the global
+  // map struct (data) every 1 sec.
   static char A[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
     { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
@@ -19,7 +23,14 @@
     { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
   };
+  // Shared map (struct) between all the avatars
+  GtkWidget *main_window;
+  GtkWindow* vbox,
+    /**button,*/
+    *area;
 
+  /******************************************/
+  //  FOR DEMOING AVATAR MOVEMENT TESTING-- REMOVE FOR DEPLOYMENT -- 
   // Example 2D array with avatar
   static char A_WITH_AVATAR[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
@@ -58,13 +69,8 @@
     { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
   };
+  /*********************END*********************/
 
-// Shared map (struct) between all the avatars
-GtkWidget *main_window;
-    GtkWindow* vbox,
-            /**button,*/
-            *area;
-matrix* data;
 
 // Simulation Flag
 int flag = 0; // used to simulate avatar moving in sep thread
@@ -182,9 +188,12 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
 }
 
 
+/**
+ * timer_tic 
+ * redraws the canvas area every UPDATE_INTERVAL 
+ **/
 gboolean timer_tic(gpointer data){
   gtk_widget_queue_draw(area);
-
   return TRUE;
 }
 
@@ -212,7 +221,7 @@ void render_maze(){
                             /*G_CALLBACK (gtk_widget_queue_draw), area);*/
 
   // start a timeout with interval
-  gint timer = g_timeout_add_seconds(1, timer_tic, NULL);
+  gint timer = g_timeout_add_seconds(UPDATE_INTERVAL, timer_tic, NULL);
 
   gtk_widget_show_all (main_window);
 
