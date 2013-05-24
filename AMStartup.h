@@ -14,6 +14,7 @@ typedef struct _shared_map{
     int row;
     int col;
     int map[MAX_DIM][MAX_DIM];
+    int turnID;
 
 } shared_map;
 

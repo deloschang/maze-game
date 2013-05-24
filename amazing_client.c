@@ -40,34 +40,57 @@
 #include <unistd.h>
 #include "header.h"
 //#include "algorithm.h"
-//#include <sys/sem.h>
+#include <sys/sem.h>
+#include "semun.h"
 
-//static int set_semvalue(void);
-//static void del_semvalue(void);
-//static int semaphore_p(void);
-//static int semaphore_v(void);
-
+//semaphore related functions
+//static int set_semvalue(int sem_id);
+//static void del_semvalue(int sem_id);
+//static int semaphore_p(int sem_id);
+//static int semaphore_v(int sem_id);
+//semaphore id
 //static int sem_id;
 
 int main(int argc,char* argv[]){
     //extern matrix* data;
+    //printf("amazing client started\n");
 
     int avatar_id=atoi(argv[1]);
+
+    int sem_id;
+    //getting semaphore
+    if (avatar_id==0){
+        sem_id=semget((key_t)1324,1,0666 | IPC_CREAT);
+	if (!set_semvalue(sem_id)){
+	     printf("failed to initialize semaphore\n");
+	     exit(1);
+	}
+    }else{
+	system("sleep 1");
+	sem_id=semget((key_t)1324,1,0666);
+    }
+
+    
+
+    //int avatar_id=atoi(argv[1]);
     int nAvatars=atoi(argv[2]);
     int maze_diff=atoi(argv[3]);
 
     char server_ip[AM_MAX_MESSAGE];
     BZERO(server_ip,AM_MAX_MESSAGE);
     strncpy(server_ip,argv[4],AM_MAX_MESSAGE);
+    //printf("%s\n",server_ip);
 
     int maze_port=atoi(argv[5]);
+    printf("%d\n",maze_port);
     
     char log_file[AM_MAX_MESSAGE];
     BZERO(log_file,AM_MAX_MESSAGE);
     strncpy(log_file,argv[6],AM_MAX_MESSAGE);
-
+    //printf("%s\n",log_file);
+    //fflush(stdout);
     //establishing server connection
-
+    //printf("hi");
     int sockfd;
     struct sockaddr_in servaddr;
     AM_MESSAGE* sendline=malloc(sizeof(AM_MESSAGE));
@@ -108,11 +131,19 @@ int main(int argc,char* argv[]){
     }
 
     int turn_num=ntohl(recvline->msg.avatar_turn.TurnId);
-    XYPOS* init_pos;//=malloc(sizeof(XYPOS));
-    init_pos=&(recvline->msg.avatar_turn.Pos[avatar_id]);
+    XYPOS* init_pos=malloc(sizeof(XYPOS));
+    //init_pos=&(recvline->msg.avatar_turn.Pos[avatar_id]);
+    init_pos->xPos=ntohl(recvline->msg.avatar_turn.Pos[avatar_id].xPos);
+    init_pos->yPos=ntohl(recvline->msg.avatar_turn.Pos[avatar_id].yPos);
 
     //add semaphore (not using for the moment)
-    
+    //printf("message %d\n",ntohl(recvline->message_type));
+    //printf("avatar id %d\n",avatar_id);
+    //printf("x %d\n",init_pos->xPos);
+    //printf("y  %d\n",init_pos->yPos);
+    //printf("turn num %d\n",turn_num);
+    //printf("-----\n");
+    //return 1;
     //int i;
     //int pause_time;
     //char op_char='O';
@@ -120,13 +151,37 @@ int main(int argc,char* argv[]){
     //sem_id=semget((key_t)1324,1,0666 | IPC_CREAT);
 
     //--------
-    int counter=turn_num;
-    for (int i=0;i<AM_MAX_AVATAR;i++){
-	if (counter==avatar_id){
-	     update_shared_map(NULL,init_pos);
-	}
-	counter++;
+    //int counter=turn_num;
+    //for (int i=0;i<nAvatars;i++){
+//	if (counter==avatar_id){
+//	     update_shared_map(NULL,init_pos);
+//	}else{
+//	     system("sleep 1");
+//	}
+//	counter++;
+  //  }
+    if (!semaphore_p(sem_id)){
+	printf("semaphore p failed\n");
+	exit(1);
+    }
+    sleep(rand() % 2);
+    update_shared_map(NULL,init_pos);
+
+    if (!semaphore_v(sem_id)){
+	printf("semaphore v failed\n");
+	exit(1);
     } 
+
+    printf("%d\n",avatar_id);
+    if (avatar_id==0){
+       //system("sleep 1");
+       //print_converted_map();
+       //print_shared_map();
+       //printf("hi\n");
+       //return 1;
+    }else{
+	system("sleep 1");
+    }
 
     //FOR GRAPHICS
     //if (avatar_id==0){
@@ -139,26 +194,49 @@ int main(int argc,char* argv[]){
     //goal=get_average();
     //update_shared_map(init_pos);
     int condition=1;
-    XYPOS* cur_pos=init_pos;
-
+    int test_counter=0;
+    XYPOS* cur_pos=malloc(sizeof(XYPOS));
+    cur_pos=init_pos;
+    //printf("avatars %d initial position (%d,%d)\n",avatar_id,init_pos->xPos,
+//							init_pos->yPos);
+    XYPOS* new_pos=malloc(sizeof(XYPOS));
+    XYPOS* prev;
     //main loop to solve the maze
-    while (condition){
+    while (condition && test_counter<10){
 
 	if (turn_num==avatar_id){
 	   if (mat!=NULL){
-		free(mat);	
+		//free(mat);	
 	   }
+
+	   if (!semaphore_p(sem_id)){
+		printf("semp failed\n");
+		exit(1);
+   	   }
+	   printf("avatar's turn: %d\n",avatar_id);
 	   matrix* mat=convert_map();
 	   if (goal!=NULL){
-	       free(goal);
+	       //free(goal);
 	   }
-	   goal=get_average();
+	   //printf("getting average %d\n",avatar_id);
+	   //goal=get_average();
+	   goal=malloc(sizeof(XYPOS));
+           goal->xPos=2;
+	   goal->yPos=2;
+
+	   //printf("getting next move for avatar  %d\n",avatar_id);
 
 	   int next_move=find_move(cur_pos,goal,mat);
+	   if (avatar_id==0 || avatar_id==2){
+		next_move=8;
+	   }
 	   if (next_move==-1){
 	        printf("No valid move is possible. Exiting\n");
 	        exit(1);
-	   }
+	   }else{
+		printf("Calculated move for av %d %d\n",
+			avatar_id,next_move);
+    	   }
 
 	   sendline->message_type=htonl(AM_AVATAR_MOVE);
 	   sendline->msg.avatar_move.AvatarId=htonl(avatar_id);
@@ -184,10 +262,14 @@ int main(int argc,char* argv[]){
 		//strncpy(maze_solved,
 		FILE* fp=fopen(log_file,"a");
                 if (fp!=NULL){
-		    fprintf(fp,"%d,",recvline->msg.maze_solved.Difficulty);
-		    fprintf(fp,"%d,", recvline->msg.maze_solved.nAvatars);
-		    fprintf(fp,"%d,", recvline->msg.maze_solved.nMoves);
-		    fprintf(fp,"%d,", recvline->msg.maze_solved.Hash);
+		    fprintf(fp,"%d,",ntohl(
+			recvline->msg.maze_solved.Difficulty));
+		    fprintf(fp,"%d,", 
+			ntohl(recvline->msg.maze_solved.nAvatars));
+		    fprintf(fp,"%d,", 
+			ntohl(recvline->msg.maze_solved.nMoves));
+		    fprintf(fp,"%d,", 
+			ntohl(recvline->msg.maze_solved.Hash));
 		    fclose(fp);
 		}else{
 		    printf("failed to open log file\n");
@@ -203,11 +285,25 @@ int main(int argc,char* argv[]){
 	    }
 
 	    if (ntohl(recvline->message_type)==AM_AVATAR_TURN && condition==1){
-	        XYPOS* new_pos=&(recvline->msg.avatar_turn.Pos[avatar_id]);
+	        //XYPOS* new_pos=malloc(sizeof(XYPOS));
+                //new_pos=&(recvline->msg.avatar_turn.Pos[avatar_id]);
+                prev=cur_pos;
+		//turn_num=ntohl(recvline->msg.avatar_turn.TurnId);
+                new_pos->xPos=ntohl(recvline->msg.avatar_turn.
+					Pos[avatar_id].xPos);
+		new_pos->yPos=ntohl(recvline->msg.avatar_turn.
+					Pos[avatar_id].yPos);
+ 		printf("previous position for avatar %d (%d,%d)\n",
+			avatar_id,cur_pos->xPos,cur_pos->yPos);
+		printf("from the server for avatar %d (%d,%d)\n",
+			avatar_id,new_pos->xPos,new_pos->yPos);
+		fflush(stdout);
 	        if (new_pos->xPos==cur_pos->xPos
-			&& new_pos->yPos==cur_pos->yPos){
+			&& new_pos->yPos==cur_pos->yPos && next_move!=8){
 		    //mark as wall
-		    XYPOS* wall=cur_pos;
+		    XYPOS* wall=malloc(sizeof(XYPOS));
+		    wall->xPos=cur_pos->xPos*2;
+		    wall->yPos=cur_pos->yPos*2;
 		    if (next_move==M_WEST){
 		         wall->xPos=wall->xPos-1;
 		         mark_as_wall(wall);
@@ -221,11 +317,18 @@ int main(int argc,char* argv[]){
 		        wall->xPos=wall->xPos+1;
 		        mark_as_wall(wall);
 		    }
-	         }else{
-	            update_shared_map(cur_pos,new_pos);
-
-		    cur_pos=new_pos;
+		    free(wall);
+		    //printf("avatar %d ran into wall\n",avatar_id);
+	         }else {
+		    //if (next_move!=8){
+	                update_shared_map(cur_pos,new_pos);
+		    //}
+                    //free(cur_pos);
+		    //cur_pos=new_pos;
+		    cur_pos->xPos=new_pos->xPos;
+		    cur_pos->yPos=new_pos->yPos;
 	         }
+		 //free(new_pos);
 
 		 //FOR GRAPHICS
 		 //free(data);
@@ -235,7 +338,7 @@ int main(int argc,char* argv[]){
 	         snprintf(coord,50,"%d",cur_pos->xPos);
 	         char log_file_msg[AM_MAX_MESSAGE];
 	         BZERO(log_file_msg,AM_MAX_MESSAGE);
-	         strncpy(log_file_msg,"echo ",AM_MAX_MESSAGE);
+	         strncpy(log_file_msg,"echo '",AM_MAX_MESSAGE);
 	         strncat(log_file_msg,"Avatar ",AM_MAX_MESSAGE);
 	         strncat(log_file_msg,argv[1],AM_MAX_MESSAGE);
 	         strncat(log_file_msg," moved to (",AM_MAX_MESSAGE);
@@ -246,19 +349,36 @@ int main(int argc,char* argv[]){
 	         snprintf(coord,50,"%d",cur_pos->yPos);
 	    
 	         strncat(log_file_msg,coord,AM_MAX_MESSAGE);
-	         strncat(log_file_msg,") >>",AM_MAX_MESSAGE);
+	         strncat(log_file_msg,")' >>",AM_MAX_MESSAGE);
 	         strncat(log_file_msg,log_file,AM_MAX_MESSAGE);
 	         system(log_file_msg);
 	    
 	         turn_num=ntohl(recvline->msg.avatar_turn.TurnId);
+		 //update_turn_id(turn_num);
+		 //printf("next turn changes from %d to %d\n",
+		//	avatar_id,turn_num);
+		 printf("avatar %d moved from (%d,%d) to (%d,%d)\n",
+	avatar_id,prev->xPos,prev->yPos,cur_pos->xPos,cur_pos->yPos);
+		fflush(stdout);
+		 //printf("goal is (%d,%d)\n",goal->xPos,goal->yPos);
+		 
+
+		  
 	    }else{
 		printf("shouldnt happen\n");
 	    }
 
+	    if (!semaphore_v(sem_id)){
+		printf("semv failed\n");
+		exit(1);
+	    }
+
 	}else{
+	    //system("sleep 1");
             if (recv(sockfd,recvline,sizeof(AM_MESSAGE),0)==0){
-               printf("Couldnt receive message from the server\n");
-               return 1;
+                printf("%d Couldnt receive message from the server\n",
+						avatar_id);
+                return 1;
 
             }
 
@@ -267,31 +387,102 @@ int main(int argc,char* argv[]){
 	    }
 
 	    if (ntohl(recvline->message_type)==AM_MAZE_SOLVED ||
-	       ntohl(recvline->message_type)==AM_SERVER_TIMEOUT ||
+	        ntohl(recvline->message_type)==AM_SERVER_TIMEOUT ||
 		ntohl(recvline->message_type)==AM_TOO_MANY_MOVES){
 		condition=0;
 	    }
+	    //system("sleep 1");
+	    //turn_num++;
+	    //if (turn_num==nAvatars){
+	    //    turn_num=0;
+	    //}
 	
 
 
 
 	}
+	//printf("turn num %d\n",turn_num);
+	if (!semaphore_p(sem_id)){
+	    printf("semaphore_p failed\n");
+	    exit(1);
+	    //turn_num=get_turn_id();
+	}
 
-	
+	//turn_num=get_turn_id();
 
+
+	if (!semaphore_v(sem_id)){
+	   printf("semaphore v failed\n");
+	   exit(1);
+	}
+        sleep(rand() % 2);
+	    
+
+
+	test_counter++;
+        //system("sleep 1");
 
 
     }
+    if (avatar_id==0){
+        sleep(2);
+        del_semvalue(sem_id);
+    }
 
-    free(goal);
-    free(mat);
+    //free(goal);
+    //free(mat);
     free(recvline);
     free(sendline);
-    free(data);
+    //free(data);
+    //free(new_pos);
+    //free(cur_pos);
     
     //free shared map
-    free_shared_memory();
+    if (avatar_id==0){
+	print_converted_map();
+        free_shared_memory();
+    }else{
+	//system("sleep 1");
+    }
+    printf("%d\n",avatar_id);
     return 0;
+
+}
+
+int get_turn_id(){
+   shared_map* sh_map=get_shared_map();
+   int id= sh_map->turnID;
+   return id;
+}
+
+void update_turn_id(int new_turnID){
+   shared_map* sh_map=get_shared_map();
+   sh_map->turnID=new_turnID;
+}
+
+void print_shared_map(){
+    shared_map* sh_map=get_shared_map();
+    for (int i=0;i<sh_map->row;i++){
+	for (int j=0;j<sh_map->col;j++){
+	     printf("%d",sh_map->map[i][j]);
+        }
+	printf("\n");
+    }
+
+
+
+}
+
+void print_converted_map(){
+    matrix* mat=convert_map();
+    for (int i=0;i<mat->row;i++){
+	for (int j=0;j<mat->column;j++){
+	     printf("%c",mat->matrix[i][j]);
+	}
+	printf("\n");
+
+    }
+    free(mat);
 
 }
 
@@ -304,32 +495,40 @@ matrix* convert_map(){
     char child_mat[sh_map->row][sh_map->col];
     for (int i=0;i<sh_map->row;i++){
 	BZERO(child_mat[i],sh_map->col);
+        BZERO(mat->matrix[i],sh_map->col);
 	for (int j=0;j<sh_map->col;j++){
 	    if (i % 2==0 && j % 2==0){
 		if (sh_map->map[i][j]==7){
-		     child_mat[i][j]='.';
+		     child_mat[i][j]='A';
+		     mat->matrix[i][j]='A';
 		}else{
 		     child_mat[i][j]='E';
+		     mat->matrix[i][j]='E';
 		}
 	    }else if (i % 2==0 && j % 2!=0){
 		if (sh_map->map[i][j]==1){
 		     child_mat[i][j]='1';
+		     mat->matrix[i][j]='1';
 		}else{
 		     child_mat[i][j]='0';
+		     mat->matrix[i][j]='0';
 		}
 	    }else if (i % 2!=0 && j % 2==0){
 		if (sh_map->map[i][j]==1){
 		     child_mat[i][j]='_';
+		     mat->matrix[i][j]='_';
 		}else{
 		     child_mat[i][j]='0';
+		     mat->matrix[i][j]='0';
 		}
 	    }else if (i % 2!=0 && j % 2!=0){
 		child_mat[i][j]='Z';
+		mat->matrix[i][j]='Z';
 	    }	     
 
 	}
     }
-    mat->matrix=(char**)child_mat;
+    //mat->matrix=child_mat;
     return mat;
 
 
@@ -337,17 +536,24 @@ matrix* convert_map(){
 
 void mark_as_wall(XYPOS* wall){
      shared_map* sh_map=get_shared_map();
-     sh_map->map[(wall->yPos)*2][(wall->xPos)*2]=1;
+     sh_map->map[(wall->yPos)][(wall->xPos)]=1;
+     printf("marking wall at %d,%d\n",wall->yPos,wall->xPos);
 }
 
 XYPOS* get_average(){
+    printf("inside get average\n");
     shared_map* sh_map=get_shared_map();
+    printf("got shared map inside get avg function\n");
     int sum_x=0;
     int sum_y=0;
     int count=0;
+    //printf("%d,%d\n",sh_map->row,sh_map->col);
     for (int i=0;sh_map->row;i++){
+        //printf("outer\n");
 	for (int j=0;j<sh_map->col;j++){
+	     //printf("%d",sh_map->map[i][j]);
 	     if (sh_map->map[i][j]==7){
+		printf("if\n");
 		sum_x+=j;
 		sum_y+=i;
 		count++;
@@ -356,14 +562,22 @@ XYPOS* get_average(){
     }
     XYPOS* goal=malloc(sizeof(XYPOS));
     MALLOC_CHECK(goal);
+    printf("count %d\n",count);
     goal->xPos=sum_x/count/2;
     goal->yPos=sum_y/count/2;
+    //printf("inside get average\n");
+    printf("%d,%d\n",goal->yPos,goal->xPos);
     return goal;
 
 }
 
 
 void update_shared_map(XYPOS* old, XYPOS *new){
+     if (old!=NULL){
+       //printf("Update Map:\n"); 
+       //printf("%d,%d\n",old->xPos,old->yPos);
+       //printf("%d,%d\n",new->xPos,new->yPos);
+     }
      if (old==NULL){
          shared_map* sh_map=get_shared_map();
          sh_map->map[(new->yPos)*2][(new->xPos)*2]=7;
@@ -384,7 +598,7 @@ shared_map* get_shared_map(){
     shmid=shmget((key_t)1323,sizeof(shared_map),0666);// | IPC_CREAT);
 
     if (shmid ==-1){
-        printf("failed to get shared memory\n");
+        printf("failed to get shared memory inside get_shared_map\n");
         exit(1);
 
     }
@@ -426,3 +640,63 @@ void free_shared_memory(){
     }
 
 }
+
+
+
+/* The function set_semvalue initializes the semaphore using the SETVAL command in a
+ semctl call. We need to do this before we can use the semaphore. 
+
+static int set_semvalue(void)
+{
+    union semun sem_union;
+
+    sem_union.val = 1;
+    if (semctl(sem_id, 0, SETVAL, sem_union) == -1) return(0);
+    return(1);
+}  */
+
+/* The del_semvalue function has almost the same form, except the call to semctl uses
+ the command IPC_RMID to remove the semaphore's ID. 
+
+static void del_semvalue(void)
+{
+    union semun sem_union;
+    
+    if (semctl(sem_id, 0, IPC_RMID, sem_union) == -1)
+        fprintf(stderr, "Failed to delete semaphore\n");
+} */
+
+/* semaphore_p changes the semaphore by -1 (waiting). 
+
+static int semaphore_p(void)
+{
+    struct sembuf sem_b;
+    
+    sem_b.sem_num = 0;
+    sem_b.sem_op = -1; // P() 
+    sem_b.sem_flg = SEM_UNDO;
+    if (semop(sem_id, &sem_b, 1) == -1) {
+        fprintf(stderr, "semaphore_p failed\n");
+        return(0);
+    }
+    return(1);
+} */
+
+/* semaphore_v is similar except for setting the sem_op part of the sembuf structure to 1,
+ so that the semaphore becomes available. 
+
+static int semaphore_v(void)
+{
+    struct sembuf sem_b;
+    
+    sem_b.sem_num = 0;
+    sem_b.sem_op = 1; // V() 
+    sem_b.sem_flg = SEM_UNDO;
+    if (semop(sem_id, &sem_b, 1) == -1) {
+        fprintf(stderr, "semaphore_v failed\n");
+        return(0);
+    }
+    return(1);
+} */
+
+

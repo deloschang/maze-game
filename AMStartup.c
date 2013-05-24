@@ -151,9 +151,9 @@ int main(int argc,char* argv[]){
     //printf("%s\n",serverIP);
     //printf("%d\n",ntohl(recvline->message_type));
     //printf("%d\n",AM_INITIALIZE);
-    printf("%d\n",width);
-    printf("%d\n",height);
-    printf("%d\n",maze_port);
+    //printf("%d\n",width);
+    //printf("%d\n",height);
+    //printf("%d\n",maze_port);
 
 
     //Creating shared map object
@@ -203,21 +203,22 @@ int main(int argc,char* argv[]){
 
     //adding first line to the log file
     BZERO(logFileCommand,AM_MAX_MESSAGE);
-    strncpy(logFileCommand,"echo ",AM_MAX_MESSAGE);
+    strncpy(logFileCommand,"echo ' ",AM_MAX_MESSAGE);
     strncat(logFileCommand,userName,AM_MAX_MESSAGE);
     strncat(logFileCommand,", ",AM_MAX_MESSAGE);
     strncat(logFileCommand,MazePort,AM_MAX_MESSAGE);
     strncat(logFileCommand,", ",AM_MAX_MESSAGE);
     strncat(logFileCommand,date,AM_MAX_MESSAGE);
-    strncat(logFileCommand,";",AM_MAX_MESSAGE);
+    strncat(logFileCommand,";'",AM_MAX_MESSAGE);
     strncat(logFileCommand," >> ",AM_MAX_MESSAGE);
     strncat(logFileCommand,fileName,AM_MAX_MESSAGE);
     system(logFileCommand);
 
-    return 1;
+    //return 1;
     //launching amazing client
     int avatar_id=0;
     for (int i=0;i<num_avatars;i++){
+        //printf("created avatar %d\n",avatar_id);
         char amazingCommand[AM_MAX_MESSAGE];
         BZERO(amazingCommand,AM_MAX_MESSAGE);
 	char avatar_id_str[AM_MAX_MESSAGE];
@@ -235,9 +236,14 @@ int main(int argc,char* argv[]){
         strncat(amazingCommand,MazePort,AM_MAX_MESSAGE);
         strncat(amazingCommand," ",AM_MAX_MESSAGE);
         strncat(amazingCommand,fileName,AM_MAX_MESSAGE);
+        strncat(amazingCommand," &",AM_MAX_MESSAGE);
         system(amazingCommand);
+        //system("echo $?");
+        //system("echo string");
 	avatar_id++;
     }
+    //printf("return startup\n");
+    system("sleep 15");
     return 0;
 
 
@@ -290,6 +296,7 @@ void create_shared_map(int w,int h){
     sh_map=(shared_map*)shared_memory;
     sh_map->row=2*h-1;
     sh_map->col=2*w-1;   
+    sh_map->turnID=0;
  
     for (int i=0;i<2*h-1;i++){
 	for (int j=0;j<2*w-1;j++){
@@ -306,6 +313,8 @@ void create_shared_map(int w,int h){
 
 	}
     }
+
+    //printf("map created\n");
 
 }
 

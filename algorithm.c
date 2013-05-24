@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "header.h"
 #include "amazing_client.h"
-
+#include <string.h>
 //int heuristic_function(XYPOS *start, XYPOS *end, matrix *map);
 //int valid_pos(XYPOS *pos, matrix *map);
 //int check_move(XYPOS *pos, XYPOS *end, int direction, matrix *map);
@@ -50,7 +50,11 @@ int find_move (XYPOS *start, XYPOS *end, matrix *map){
   int best_move;
   int best_score = 10000;//fix
   
-  
+  if (start->xPos==end->xPos && start->yPos==end->yPos){//checking current spot
+        return 8;
+  }
+  int score_array[10];
+  int score_counter=0;
   //check all directions (0 = W, 1 = N, 2 = S, 3 = E)
   for (int i = 0; i < 4; i ++) { 
     score = check_move(start, end, i, map);
@@ -58,18 +62,34 @@ int find_move (XYPOS *start, XYPOS *end, matrix *map){
     if (score < best_score && score >= 0) {
       best_score = score;
       best_move = i;
+      if (score_counter>0){
+          memset(score_array,0,sizeof(int)*score_counter);
+          score_counter=0;
+          score_array[score_counter]=i;
+      }
+    }else if (score==best_score){
+      score_counter++;
+      score_array[score_counter]=i;
     }
   } 
+
+  //if (best_score==0){
+    //return 8;
+  //}
   
   if (best_score == 10000)
     return -1;
   else
-    return best_move;
+    if (score_counter>0){
+	return (rand() % (score_counter+1));
+    }else{
+        return best_move;
+    }
   
 }
 
 int heuristic_function(XYPOS *start, XYPOS *end, matrix *map) {
-  return (abs(start->xPos - end->xPos * 2) + abs(start->yPos - end->yPos * 2));
+  return (abs( start->xPos - end->xPos*2 ) + abs(start->yPos - end->yPos*2 ));
     
 }
 
@@ -106,7 +126,7 @@ int check_move(XYPOS *pos, XYPOS *end, int direction, matrix *map){
     wallx = move->xPos;
     wally = move->yPos - 1;
   }
-  else {
+  else if (direction ==3) {
     move->xPos = move->xPos +2;
     wallx = move->xPos - 1;
     wally = move->yPos;
