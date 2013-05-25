@@ -107,6 +107,7 @@ clean:
 	rm -f graphics
 	rm -f startup
 	rm -f algo
+	rm -f amazing_client
 
 cleanlog:
 	rm -f *log.*

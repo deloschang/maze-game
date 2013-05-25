@@ -14,9 +14,13 @@
 # Other
 *.c~
 *.h~
+*.log
 
 # Executables
 graphics
+algo
+amazing_client
+startup
 *.exe
 *.out
 *.app
