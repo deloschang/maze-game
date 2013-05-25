@@ -89,7 +89,55 @@ int find_move (XYPOS *start, XYPOS *end, matrix *map){
 }
 
 int heuristic_function(XYPOS *start, XYPOS *end, matrix *map) {
-  return (abs( start->xPos - end->xPos*2 ) + abs(start->yPos - end->yPos*2 ));
+  XYPOS* sentinel=malloc(sizeof(XYPOS));
+  sentinel->xPos=start->xPos;
+  sentinel->yPos=start->yPos;
+  int cost=0;
+  //int nearness=0;
+  while (sentinel->xPos!=end->xPos*2){
+	if (sentinel->xPos<end->xPos*2){
+	    if (map->matrix[sentinel->yPos][sentinel->xPos+1]=='1'){
+		cost+=10;
+	    }
+
+	    if (map->matrix[sentinel->yPos][sentinel->xPos]=='V'){
+		cost+=4;
+	    }
+	    sentinel->xPos+=2;
+	}else{
+	    if (map->matrix[sentinel->yPos][sentinel->xPos-1]=='1'){
+		cost+=10;
+	    }
+
+            if (map->matrix[sentinel->yPos][sentinel->xPos]=='V'){
+                cost+=4;
+            }
+
+
+	    sentinel->xPos-=2;
+	}
+  }
+
+  sentinel->xPos=start->xPos;
+  sentinel->yPos=start->yPos;
+  while (sentinel->yPos!=end->yPos*2){
+        if (sentinel->yPos<end->yPos*2){
+            if (map->matrix[sentinel->yPos+1][sentinel->xPos]=='_'){
+                cost+=6;
+            }
+            sentinel->yPos+=2;
+        }else{
+            if (map->matrix[sentinel->yPos-1][sentinel->xPos]=='_'){
+                cost+=6;
+            }
+            sentinel->yPos-=2;
+        }
+  }
+  free(sentinel);
+
+
+  return (cost+abs( start->xPos - end->xPos*2 )+
+			 abs(start->yPos - end->yPos*2 ));
     
 }
 

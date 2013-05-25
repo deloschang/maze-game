@@ -57,3 +57,36 @@ int find_move(XYPOS *start, XYPOS *end, matrix *map);
    // int map[MAX_DIM][MAX_DIM];
 
 //} shared_map;
+//
+
+
+//bfs related functions
+//and data structures
+
+typedef struct _cell{
+     int x;
+     int y;
+     struct _cell* parent;
+     struct _cell* next;
+     struct _cell* prev;
+     int dist;
+     int is_visited;
+}cell;
+
+typedef struct _queue{
+     cell* head;
+}queue;
+
+void enqueue(queue* q,cell* c);
+cell* dequeue(queue* q);
+void find_path(matrix* mat,XYPOS* start,XYPOS* end,int path[]);
+void construct_path(cell* c,int path[]);
+cell* init_cell(int x,int y,int d,int mark,cell* parent);
+void free_queue();
+int contains(queue* q,int x,int y);
+//void print_path(matrix* mat,XYPOS* s,XYPOS* e);
+void print_path(int path[],int length);
+void shuffle(int* array);
+
+
+

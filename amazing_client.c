@@ -82,7 +82,7 @@ int main(int argc,char* argv[]){
     //printf("%s\n",server_ip);
 
     int maze_port=atoi(argv[5]);
-    printf("%d\n",maze_port);
+    //printf("%d\n",maze_port);
     
     char log_file[AM_MAX_MESSAGE];
     BZERO(log_file,AM_MAX_MESSAGE);
@@ -202,7 +202,37 @@ int main(int argc,char* argv[]){
     XYPOS* new_pos=malloc(sizeof(XYPOS));
     XYPOS* prev;
     //main loop to solve the maze
-    while (condition && test_counter<10){
+    
+    //testing bfs
+    //
+    int path[100];
+    int path_count=0;
+    //condition=0;
+    //if (avatar_id==0){
+    if (!semaphore_p(sem_id)){
+        printf("semaphore p failed\n");
+        exit(1);
+    }
+
+    //condition=0;
+    goal=malloc(sizeof(XYPOS));
+    goal->xPos=2;
+    goal->yPos=2;
+    matrix* m=convert_map();
+    //path=find_path(m,cur_pos,goal);
+    find_path(m,cur_pos,goal,path);
+    //print_path(m,cur_pos,goal);
+
+    if (!semaphore_v(sem_id)){
+        printf("semaphore v failed\n");
+        exit(1);
+    }
+    //}
+
+
+
+
+    while (condition && test_counter<50){
 
 	if (turn_num==avatar_id){
 	   if (mat!=NULL){
@@ -223,21 +253,30 @@ int main(int argc,char* argv[]){
 	   goal=malloc(sizeof(XYPOS));
            goal->xPos=2;
 	   goal->yPos=2;
+	
+	   printf("goal for avatar  %d is (%d,%d)\n",avatar_id,
+				goal->xPos*2,goal->yPos*2);
+	   
+	   //path=find_path(mat,cur_pos,goal);
 
-	   //printf("getting next move for avatar  %d\n",avatar_id);
-
-	   int next_move=find_move(cur_pos,goal,mat);
-	   if (avatar_id==0 || avatar_id==2){
-		next_move=8;
+	   //int next_move=find_move(cur_pos,goal,mat);
+	   //if (next_move==-1){
+	     //   printf("No valid move is possible. Exiting\n");
+	       // exit(1);
+	   //}else{
+	//	printf("Calculated move for av %d %d\n",
+	//		avatar_id,next_move);
+    	  // }
+    	  int next_move;
+    	  //if (avatar_id==1){
+	  if (path_count>=0){
+    	      next_move=path[path_count];
+	      path_count++;
+	  }
+           else{
+ 		next_move=8;
 	   }
-	   if (next_move==-1){
-	        printf("No valid move is possible. Exiting\n");
-	        exit(1);
-	   }else{
-		printf("Calculated move for av %d %d\n",
-			avatar_id,next_move);
-    	   }
-
+	   printf("Next move for avatar: %d is %d\n",avatar_id,next_move);
 	   sendline->message_type=htonl(AM_AVATAR_MOVE);
 	   sendline->msg.avatar_move.AvatarId=htonl(avatar_id);
 	   sendline->msg.avatar_move.Direction=htonl(next_move);
@@ -318,6 +357,23 @@ int main(int argc,char* argv[]){
 		        mark_as_wall(wall);
 		    }
 		    free(wall);
+		    //free(path);
+ 		    mat=convert_map();
+		    //print_converted_map();
+ 		    //path=find_path(mat,cur_pos,goal);
+ 		    find_path(mat,cur_pos,goal,path);
+		    //if (path==NULL){
+		//	printf("failed to find path\n");
+			//exit(1);
+		//	path_count=-1;
+		//	next_move=8;
+		  //  }else{
+			//printf("hi\n");
+			//fflush(stdout);
+			//print_path(path);
+	       	    path_count=0;
+		    //}
+		    //path_count=0;
 		    //printf("avatar %d ran into wall\n",avatar_id);
 	         }else {
 		    //if (next_move!=8){
@@ -325,9 +381,15 @@ int main(int argc,char* argv[]){
 		    //}
                     //free(cur_pos);
 		    //cur_pos=new_pos;
-		    cur_pos->xPos=new_pos->xPos;
-		    cur_pos->yPos=new_pos->yPos;
-	         }
+		 }
+		 cur_pos->xPos=new_pos->xPos;
+		 cur_pos->yPos=new_pos->yPos;
+	         
+		 if (cur_pos->xPos==goal->xPos && cur_pos->yPos==goal->yPos){
+		     path_count=-1;
+		     next_move=8;
+		 }
+		     
 		 //free(new_pos);
 
 		 //FOR GRAPHICS
@@ -357,15 +419,15 @@ int main(int argc,char* argv[]){
 		 //update_turn_id(turn_num);
 		 //printf("next turn changes from %d to %d\n",
 		//	avatar_id,turn_num);
-		 printf("avatar %d moved from (%d,%d) to (%d,%d)\n",
-	avatar_id,prev->xPos,prev->yPos,cur_pos->xPos,cur_pos->yPos);
-		fflush(stdout);
+		 printf("avatar %d moved from to (%d,%d)\n",
+	avatar_id,cur_pos->xPos,cur_pos->yPos);
+		//fflush(stdout);
 		 //printf("goal is (%d,%d)\n",goal->xPos,goal->yPos);
 		 
 
 		  
 	    }else{
-		printf("shouldnt happen\n");
+		printf("Maze Solved!!\n");
 	    }
 
 	    if (!semaphore_v(sem_id)){
@@ -374,7 +436,15 @@ int main(int argc,char* argv[]){
 	    }
 
 	}else{
-	    //system("sleep 1");
+	    //system("sleep 1")
+	
+            //if (!semaphore_p(sem_id)){
+              //  printf("semaphore_p failed\n");
+                //exit(1);
+	    //}
+
+	    sleep(2);
+
             if (recv(sockfd,recvline,sizeof(AM_MESSAGE),0)==0){
                 printf("%d Couldnt receive message from the server\n",
 						avatar_id);
@@ -402,20 +472,20 @@ int main(int argc,char* argv[]){
 
 	}
 	//printf("turn num %d\n",turn_num);
-	if (!semaphore_p(sem_id)){
-	    printf("semaphore_p failed\n");
-	    exit(1);
+	//if (!semaphore_p(sem_id)){
+	  //  printf("semaphore_p failed\n");
+	    //exit(1);
 	    //turn_num=get_turn_id();
-	}
+	//}
 
 	//turn_num=get_turn_id();
 
 
-	if (!semaphore_v(sem_id)){
-	   printf("semaphore v failed\n");
-	   exit(1);
-	}
-        sleep(rand() % 2);
+	//if (!semaphore_v(sem_id)){
+	  // printf("semaphore v failed\n");
+	  // exit(1);
+	//}
+        sleep(1);
 	    
 
 
@@ -501,6 +571,8 @@ matrix* convert_map(){
 		if (sh_map->map[i][j]==7){
 		     child_mat[i][j]='A';
 		     mat->matrix[i][j]='A';
+		//}else if (sh_map->map[i][j]==9){
+		  //   mat->matrix[i][j]='V';
 		}else{
 		     child_mat[i][j]='E';
 		     mat->matrix[i][j]='E';
@@ -537,23 +609,23 @@ matrix* convert_map(){
 void mark_as_wall(XYPOS* wall){
      shared_map* sh_map=get_shared_map();
      sh_map->map[(wall->yPos)][(wall->xPos)]=1;
-     printf("marking wall at %d,%d\n",wall->yPos,wall->xPos);
+     printf("marking wall at %d,%d\n",wall->xPos,wall->yPos);
 }
 
 XYPOS* get_average(){
-    printf("inside get average\n");
+    //printf("inside get average\n");
     shared_map* sh_map=get_shared_map();
-    printf("got shared map inside get avg function\n");
+    //printf("got shared map inside get avg function\n");
     int sum_x=0;
     int sum_y=0;
     int count=0;
     //printf("%d,%d\n",sh_map->row,sh_map->col);
-    for (int i=0;sh_map->row;i++){
+    for (int i=0;i<sh_map->row;i++){
         //printf("outer\n");
 	for (int j=0;j<sh_map->col;j++){
 	     //printf("%d",sh_map->map[i][j]);
 	     if (sh_map->map[i][j]==7){
-		printf("if\n");
+		//printf("if\n");
 		sum_x+=j;
 		sum_y+=i;
 		count++;
@@ -562,11 +634,11 @@ XYPOS* get_average(){
     }
     XYPOS* goal=malloc(sizeof(XYPOS));
     MALLOC_CHECK(goal);
-    printf("count %d\n",count);
+    //printf("count %d\n",count);
     goal->xPos=sum_x/count/2;
     goal->yPos=sum_y/count/2;
     //printf("inside get average\n");
-    printf("%d,%d\n",goal->yPos,goal->xPos);
+    printf("goal :(%d,%d)\n",goal->yPos,goal->xPos);
     return goal;
 
 }
@@ -583,7 +655,7 @@ void update_shared_map(XYPOS* old, XYPOS *new){
          sh_map->map[(new->yPos)*2][(new->xPos)*2]=7;
      }else{
 	 shared_map* sh_map=get_shared_map();
-	 sh_map->map[(old->yPos)*2][(old->xPos)*2]=3;
+	 sh_map->map[(old->yPos)*2][(old->xPos)*2]=9;
 	 sh_map->map[(new->yPos)*2][(new->xPos)*2]=7;
      }
 
