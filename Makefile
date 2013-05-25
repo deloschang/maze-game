@@ -5,17 +5,21 @@ CFLAGS = -Wall -pedantic -std=c99
 CFLAGS1 = -Wall 
 PKGFLAGS = `pkg-config --cflags gtk+-2.0 --libs gtk+-2.0`
 
-EXEC = graphics
-OBJS = graphics.o
-SRCS = graphics.c 
+EXEC = startup
+OBJS = AMStartup.o
+SRCS = AMStartup.c 
 
-EXEC2 = startup
-OBJS2 = AMStartup.o
-SRCS2 = AMStartup.c 
+#EXEC2 = graphics
+#OBJS2 = graphics.o
+#SRCS2 = graphics.c 
 
-EXEC3 = algo
-OBJS3 = algorithm.o
-SRCS3 = algorithm.c 
+#EXEC3 = algo
+#OBJS3 = algorithm.o
+#SRCS3 = algorithm.c 
+
+EXEC4 = amazing_client
+OBJS4 = amazing_client.o bfs.o sem1.o graphics.o
+SRCS4 = amazing_client.c bfs.c sem1.c graphics.c
 
 # Future library details
 #UTILDIR=../utils/
@@ -25,14 +29,28 @@ SRCS3 = algorithm.c
 #UTILH=$(UTILC:.c=.h)
 
 # Commands start with TAB not spaces
+
+# Compile startup and Amazing client
 $(EXEC): $(OBJS)
-	#$(CC) $(CFLAGS) -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG)  # future library 
 	$(CC) $(CFLAGS) -o $(EXEC) $(OBJS) $(PKGFLAGS)
-	./graphics
+	$(CC) $(CFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
+
+	# test run
+	./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
+
 	make clean
+
 $(OBJS): $(SRCS) 
 	$(CC) $(CFLAGS) -c $(SRCS) $(PKGFLAGS)
 
+# Amazing Client
+$(EXEC4): $(OBJS4)   
+	$(CC) $(CFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
+
+$(OBJS4): $(SRCS4) 
+	$(CC) $(CFLAGS) -c $(SRCS4) $(PKGFLAGS)
+
+#=====================================================#
 #unit: $(SRCS2) 
 	#$(CC) $(CFLAGS) -c $(SRCS2) 
 	#$(CC) $(CFLAGS) -o $(EXEC2) $(OBJS2) -L$(UTILDIR) $(UTILFLAG)
@@ -41,15 +59,16 @@ $(OBJS): $(SRCS)
 	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC2) $(OBJS2) -L$(UTILDIR) $(UTILFLAG)
 	#gdb --args queryengine_test
 
-$(EXEC2): $(OBJS2)
-	$(CC) $(CFLAGS) -o $(EXEC2) $(OBJS2)
-$(OBJS2): $(SRCS2) 
-	$(CC) $(CFLAGS) -c $(SRCS2) 
+#$(EXEC2): $(OBJS2)
+	#$(CC) $(CFLAGS) -o $(EXEC2) $(OBJS2)
+#$(OBJS2): $(SRCS2) 
+	#$(CC) $(CFLAGS) -c $(SRCS2) 
 
-$(EXEC3): $(OBJS3)
-	$(CC) $(CFLAGS) -o $(EXEC3) $(OBJS3)
-$(OBJS3): $(SRCS3) 
-	$(CC) $(CFLAGS) -c $(SRCS3) 
+#$(EXEC3): $(OBJS3)
+	#$(CC) $(CFLAGS) -o $(EXEC3) $(OBJS3)
+#$(OBJS3): $(SRCS3) 
+	#$(CC) $(CFLAGS) -c $(SRCS3) 
+
 
 debug: $(SRCS)
 	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS) $(PKGFLAGS)

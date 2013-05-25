@@ -6,10 +6,12 @@
 #include <stdlib.h> // for calloc
 #include <string.h> // for strlen
 #include <gtk/gtk.h> // for gtk functionality
-#include "header.h" // for gtk functionality
+#include "amazing.h"
+#include "amazing_client.h" // for gtk functionality
+#include "graphics.h"
 
   // Global map struct should go here.
-    matrix* data;
+matrix* data;
   // Call render_maze() once and it will rerender the global
   // map struct (data) every 1 sec.
   static char A[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
@@ -201,7 +203,7 @@ gboolean timer_tic(gpointer data){
 // 1 flag for update
 void render_maze(){
   main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_default_size (GTK_WINDOW (main_window), 600, 600);
+  gtk_window_set_default_size (GTK_WINDOW (main_window), WINDOW_WIDTH, WINDOW_HEIGHT);
   g_signal_connect (main_window, "destroy", gtk_main_quit, NULL);
 
   vbox = gtk_vbox_new (FALSE, 5);
