@@ -14,7 +14,7 @@
 matrix* data;
   // Call render_maze() once and it will rerender the global
   // map struct (data) every 1 sec.
-  static char A[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
+  static char Array[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
     { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
     { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
@@ -80,23 +80,18 @@ int flag = 0; // used to simulate avatar moving in sep thread
 /**
 * Takes the 2D Array and prints it onto the terminal
 */
-void render_2D_array(int row, int column, char array[row][column]){
-  // Print the level 0 array
-  for (int i = 0; i < row; i++){
-    for (int j = 0; j < column; j++){
-      printf("%c ", array[i][j]);
-    }
-    printf("\n");
-  }
-}
+/*void render_2D_array(int row, int column, char array[row][column]){*/
+  /*// Print the level 0 array*/
+  /*for (int i = 0; i < row; i++){*/
+    /*for (int j = 0; j < column; j++){*/
+      /*printf("%c ", array[i][j]);*/
+    /*}*/
+    /*printf("\n");*/
+  /*}*/
+/*}*/
 
-/**
-* Retrieves the char at the given row and column
-*/
-char retrieve_field(int row, int column, char array[row][column],
-  int chooseRow, int chooseColumn){
-  return array[chooseRow][chooseColumn];
-}
+
+
 
 static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *data){
   int i, j, width, height, maze_width, maze_column, x, y, flag;
@@ -108,18 +103,13 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
   width = gdk_window_get_width (event->window);
   height = gdk_window_get_height (event->window);
 
+
   // Localize the data
   maze_width = ((matrix*)data)->row;
   maze_column = ((matrix*)data)->column;
-
   // converting back to maze width / height (e.g. Level 0 maze would be 5 rows)
   convert_step_x = (double)width / (convertBack(maze_width));
   convert_step_y = (double)height / (convertBack(maze_column));
-
-  /** EXAMPLE **/
-  // Print the 2D Array onto the console to check
-  /*render_2D_array(((matrix*)data)->row, ((matrix*)data)->column, ((matrix*)data)->matrix);*/
-  /** EXAMPLE **/
 
   x = 0; // x coordinate to draw at
   y = 0 ; // y coordinate to draw at
@@ -134,7 +124,7 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
       /*cairo_set_source_rgb (cr, value, value, value);*/
 
       // Parse the 2D Array
-      field = retrieve_field(maze_width, maze_column, ((matrix*)data)->matrix, i, j);
+      field = ((matrix*)data)->matrix[i][j];
       if ( field == 'E'){
         x += convert_step_x;
 
@@ -264,29 +254,47 @@ void render_maze(){
 /**
 * Function that will take in a 2D Array and update the graphics
 **/
-/*int main(int argc, char **argv){*/
-  // (1) Init the GTK with arguments
-  /*gtk_init (&argc, &argv);*/
+int main(int argc, char **argv){
+   /*[>(1) Init the GTK with arguments<]*/
+  gtk_init (&argc, &argv);
 
-  // Example use of the Matrix Structure
-  /*data = malloc(sizeof(matrix));*/
-  /*data->row = LEVEL_0_ROWS;*/
-  /*data->column = LEVEL_0_COLUMNS;*/
+   /*[>Example use of the Matrix Structure<]*/
+  data = malloc(sizeof(matrix));
+  data->row = LEVEL_0_ROWS;
+  data->column = LEVEL_0_COLUMNS;
   /*data->matrix = (char**)A;*/
 
+  /*data->matrix = A;*/
+    
+    matrix* A = malloc(sizeof(matrix));
+    A->row = LEVEL_0_ROWS;
+    A->column = LEVEL_0_COLUMNS;
 
-  // Simulates the avatars moving
-  /*pthread_t t1;*/
-  /*int iret1 = pthread_create(&t1, NULL, print_i, NULL);*/
-  /*if (iret1) {*/
-    /*fprintf(stderr,*/
-        /*"pthread_create failed, rc=%d\n",iret1);*/
-    /*exit(iret1);*/
-  /*}*/
+  for (int i = 0; i < A->row; i++){
+      for (int j = 0; j < A->column; j++){
+          A->matrix[i][j] = Array[i][j];
+      }
+  }
+  
+  for (int i = 0; i < data->row; i++){
+      for (int j = 0; j < data->column; j++){
+          data->matrix[i][j] = A->matrix[i][j];
+      }
+  }
 
-   /*(2) Start the maze that takes from the global MAZE*/
-  /*render_maze();*/
+
+   /*[>Simulates the avatars moving<]*/
+  /*[>pthread_t t1;<]*/
+  /*[>int iret1 = pthread_create(&t1, NULL, print_i, NULL);<]*/
+  /*[>if (iret1) {<]*/
+    /*[>fprintf(stderr,<]*/
+        /*[>"pthread_create failed, rc=%d\n",iret1);<]*/
+    /*[>exit(iret1);<]*/
+  /*[>}<]*/
+
+   /*[>(2) Start the maze that takes from the global MAZE<]*/
+  render_maze();
 
 
-  /*return 0;*/
-/*}*/
+  return 0;
+}

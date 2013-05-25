@@ -42,6 +42,7 @@ typedef struct _matrix {
      int row;
      int column;
      char matrix[DIM][DIM];
+     //char** matrix;
 } matrix;
 
 //#if defined (__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)

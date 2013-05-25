@@ -4,14 +4,15 @@ CC = gcc
 CFLAGS = -Wall -pedantic -std=c99
 CFLAGS1 = -Wall 
 PKGFLAGS = `pkg-config --cflags gtk+-2.0 --libs gtk+-2.0`
+SVIDFLAGS = -D_SVID_SOURCE=1 
 
 EXEC = startup
 OBJS = AMStartup.o
 SRCS = AMStartup.c 
 
-#EXEC2 = graphics
-#OBJS2 = graphics.o
-#SRCS2 = graphics.c 
+EXEC2 = graphics
+OBJS2 = graphics.o
+SRCS2 = graphics.c 
 
 #EXEC3 = algo
 #OBJS3 = algorithm.o
@@ -19,7 +20,7 @@ SRCS = AMStartup.c
 
 EXEC4 = amazing_client
 OBJS4 = amazing_client.o bfs.o sem1.o graphics.o
-SRCS4 = amazing_client.c bfs.c sem1.c graphics.c
+SRCS4 = amazing_client.c bfs.c sem1.c graphics.c 
 
 # Future library details
 #UTILDIR=../utils/
@@ -33,7 +34,7 @@ SRCS4 = amazing_client.c bfs.c sem1.c graphics.c
 # Compile startup and Amazing client
 $(EXEC): $(OBJS)
 	$(CC) $(CFLAGS) -o $(EXEC) $(OBJS) $(PKGFLAGS)
-	$(CC) $(CFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
+	$(CC) $(CFLAGS) $(SVIDFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
 
 	# test run
 	./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
@@ -45,10 +46,10 @@ $(OBJS): $(SRCS)
 
 # Amazing Client
 $(EXEC4): $(OBJS4)   
-	$(CC) $(CFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
+	$(CC) $(CFLAGS) $(SVIDFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
 
 $(OBJS4): $(SRCS4) 
-	$(CC) $(CFLAGS) -c $(SRCS4) $(PKGFLAGS)
+	$(CC) $(CFLAGS) $(SVIDFLAGS) -c $(SRCS4) $(PKGFLAGS)
 
 #=====================================================#
 #unit: $(SRCS2) 
@@ -59,21 +60,21 @@ $(OBJS4): $(SRCS4)
 	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC2) $(OBJS2) -L$(UTILDIR) $(UTILFLAG)
 	#gdb --args queryengine_test
 
-#$(EXEC2): $(OBJS2)
-	#$(CC) $(CFLAGS) -o $(EXEC2) $(OBJS2)
-#$(OBJS2): $(SRCS2) 
-	#$(CC) $(CFLAGS) -c $(SRCS2) 
+# testing graphics
+$(EXEC2): $(OBJS2)
+	$(CC) $(CFLAGS) -o $(EXEC2) $(OBJS2) $(PKGFLAGS)
+	./graphics
+	make clean
 
-#$(EXEC3): $(OBJS3)
-	#$(CC) $(CFLAGS) -o $(EXEC3) $(OBJS3)
-#$(OBJS3): $(SRCS3) 
-	#$(CC) $(CFLAGS) -c $(SRCS3) 
+#$(OBJS2): $(SRCS2) 
+	#$(CC) $(CFLAGS) -c $(SRCS2) $(PKGFLAGS)
+
 
 
 debug: $(SRCS)
-	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS) $(PKGFLAGS)
+	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS2) $(PKGFLAGS)
 	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG) #future library
-	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) $(PKGFLAGS)
+	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC2) $(OBJS2) $(PKGFLAGS)
 	gdb --args graphics
 
 #debug2: $(SRCS)

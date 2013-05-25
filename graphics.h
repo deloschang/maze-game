@@ -13,6 +13,9 @@
 
 #define UPDATE_INTERVAL 1  // how often graphics checks for map
 
+//#define LEVEL_0_ROWS 9  // (2n+1) adjustment 
+//#define LEVEL_0_COLUMNS 9
+
 #define LEVEL_0_ROWS 9  // (2n+1) adjustment 
 #define LEVEL_0_COLUMNS 9
 
