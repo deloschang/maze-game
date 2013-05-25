@@ -45,8 +45,12 @@ typedef struct _matrix {
      //char** matrix;
 } matrix;
 
-//#if defined (__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
+// Global struct used for graphics
+//extern matrix* data = malloc(sizeof(matrix));
+extern matrix* data;
 
+
+//#if defined (__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
 //#else
 
   //   union semun{
@@ -77,7 +81,6 @@ int heuristic_function(XYPOS *start, XYPOS *end, matrix *map);
 int valid_pos(XYPOS *pos, matrix *map);
 int check_move(XYPOS *pos, XYPOS *end, int direction, matrix *map);
 int find_move(XYPOS *start, XYPOS *end, matrix *map);
-
 
 //typedef struct _shared_map{
   //  int row;
@@ -115,6 +118,8 @@ int contains(queue* q,int x,int y);
 //void print_path(matrix* mat,XYPOS* s,XYPOS* e);
 void print_path(int path[],int length);
 void shuffle(int* array);
+void update_graphics();
 
+void* start_graphics();
 
 

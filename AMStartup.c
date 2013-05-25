@@ -38,7 +38,6 @@
 #include <unistd.h>
 #include <sys/shm.h>
 
-
 int main(int argc,char* argv[]){
 
     char host_name[AM_MAX_MESSAGE];
@@ -424,9 +423,5 @@ int retrieveIP(char* hostname,char* IP){
     BZERO(IP,AM_MAX_MESSAGE);
     strncpy(IP,inet_ntoa(address),AM_MAX_MESSAGE);
     return 0;
-    
-
-
-
 }
 

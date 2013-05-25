@@ -64,7 +64,7 @@ $(OBJS4): $(SRCS4)
 $(EXEC2): $(OBJS2)
 	$(CC) $(CFLAGS) -o $(EXEC2) $(OBJS2) $(PKGFLAGS)
 	./graphics
-	make clean
+	make cleawn
 
 #$(OBJS2): $(SRCS2) 
 	#$(CC) $(CFLAGS) -c $(SRCS2) $(PKGFLAGS)

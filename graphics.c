@@ -262,8 +262,6 @@ void render_maze(){
   /*data = malloc(sizeof(matrix));*/
   /*data->row = LEVEL_0_ROWS;*/
   /*data->column = LEVEL_0_COLUMNS;*/
-  /*[>data->matrix = (char**)A;<]*/
-
   /*[>data->matrix = A;<]*/
     
     /*matrix* A = malloc(sizeof(matrix));*/

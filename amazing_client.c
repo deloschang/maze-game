@@ -42,6 +42,10 @@
 #include "graphics.h"
 #include <sys/sem.h>
 #include "semun.h"
+#include <gtk/gtk.h> // for gtk functionality
+
+#include <pthread.h>
+
 
 //semaphore related functions
 //static int set_semvalue(int sem_id);
@@ -51,12 +55,14 @@
 //semaphore id
 //static int sem_id;
 
+void* start_graphics(void *ptr){
+    render_maze();
+}
+
 int main(int argc,char* argv[]){
-    //extern matrix* data;
     //printf("amazing client started\n");
 
     int avatar_id=atoi(argv[1]);
-
     int sem_id;
     //getting semaphore
     if (avatar_id==0){
@@ -65,14 +71,27 @@ int main(int argc,char* argv[]){
             printf("failed to initialize semaphore\n");
             exit(1);
         }
-    }else{
+
+        gtk_init(&argc, &argv);
+        data = malloc(sizeof(matrix));
+        update_graphics();
+
+
+        pthread_t t1;
+        int iret1 = pthread_create(&t1, NULL, start_graphics, NULL);
+        if (iret1) {
+            fprintf(stderr,
+                    "pthread_create failed, rc=%d\n",iret1);
+            exit(iret1);
+        }
+
+    } else {
         system("sleep 1");
         sem_id=semget((key_t)1324,1,0666);
     }
 
     //int avatar_id=atoi(argv[1]);
-    // unused variable
-    /*int nAvatars=atoi(argv[2]);*/
+    int nAvatars=atoi(argv[2]);
     /*int maze_diff=atoi(argv[3]);*/
 
     char server_ip[AM_MAX_MESSAGE];
@@ -121,7 +140,6 @@ int main(int argc,char* argv[]){
     if (recv(sockfd,recvline,sizeof(AM_MESSAGE),0)==0){
         printf("Couldnt receive message from the server\n");
         return 1;
-
     }
 
     if (ntohl(recvline->message_type) & AM_ERROR_MASK){
@@ -237,7 +255,7 @@ int main(int argc,char* argv[]){
 
 
 
-    while (condition && test_counter<50){
+    while (condition && test_counter < 50){
 
         if (turn_num==avatar_id){
             if (mat!=NULL){
@@ -393,6 +411,10 @@ int main(int argc,char* argv[]){
                     //free(cur_pos);
                     //cur_pos=new_pos;
                 }
+
+                // New position; update the graphics
+                update_graphics();
+
                 cur_pos->xPos=new_pos->xPos;
                 cur_pos->yPos=new_pos->yPos;
 
@@ -491,9 +513,6 @@ int main(int argc,char* argv[]){
             //    turn_num=0;
             //}
 
-
-
-
         }
         //printf("turn num %d\n",turn_num);
         //if (!semaphore_p(sem_id)){
@@ -519,7 +538,7 @@ int main(int argc,char* argv[]){
 
         }
         if (avatar_id==0){
-            sleep(2);
+            sleep(2 * nAvatars);
             del_semvalue(sem_id);
         }
 
@@ -817,62 +836,24 @@ int main(int argc,char* argv[]){
 
     }
 
+    // Called each time to update the graphics map
+    void update_graphics(){
+        // retrieve the struct from the converted map
+        matrix* graphics_map = convert_map();
 
 
-    /* The function set_semvalue initializes the semaphore using the SETVAL command in a
-       semctl call. We need to do this before we can use the semaphore. 
+        // Create the global struct that is used for the graphics map
+        data->row = graphics_map->row;
+        data->column = graphics_map->column;
 
-       static int set_semvalue(void)
-       {
-       union semun sem_union;
+        for (int i = 0; i < data->row; i++){
+            for (int j = 0; j < data->column; j++){
+                data->matrix[i][j] = graphics_map->matrix[i][j];
+            }
+        }
+    
 
-       sem_union.val = 1;
-       if (semctl(sem_id, 0, SETVAL, sem_union) == -1) return(0);
-       return(1);
-       }  */
 
-    /* The del_semvalue function has almost the same form, except the call to semctl uses
-       the command IPC_RMID to remove the semaphore's ID. 
-
-       static void del_semvalue(void)
-       {
-       union semun sem_union;
-
-       if (semctl(sem_id, 0, IPC_RMID, sem_union) == -1)
-       fprintf(stderr, "Failed to delete semaphore\n");
-       } */
-
-    /* semaphore_p changes the semaphore by -1 (waiting). 
-
-       static int semaphore_p(void)
-       {
-       struct sembuf sem_b;
-
-       sem_b.sem_num = 0;
-       sem_b.sem_op = -1; // P() 
-       sem_b.sem_flg = SEM_UNDO;
-       if (semop(sem_id, &sem_b, 1) == -1) {
-       fprintf(stderr, "semaphore_p failed\n");
-       return(0);
-       }
-       return(1);
-       } */
-
-    /* semaphore_v is similar except for setting the sem_op part of the sembuf structure to 1,
-       so that the semaphore becomes available. 
-
-       static int semaphore_v(void)
-       {
-       struct sembuf sem_b;
-
-       sem_b.sem_num = 0;
-       sem_b.sem_op = 1; // V() 
-       sem_b.sem_flg = SEM_UNDO;
-       if (semop(sem_id, &sem_b, 1) == -1) {
-       fprintf(stderr, "semaphore_v failed\n");
-       return(0);
-       }
-       return(1);
-       } */
+    }
 
 
