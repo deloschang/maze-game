@@ -26,10 +26,10 @@ matrix* data;
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
   };
   // Shared map (struct) between all the avatars
-  GtkWidget *main_window;
-  GtkWindow* vbox,
+  GtkWidget *main_window,
+            *vbox,
+            *area;
     /**button,*/
-    *area;
 
   /******************************************/
   // FOR DEMOING AVATAR MOVEMENT TESTING-- REMOVE FOR DEPLOYMENT --
