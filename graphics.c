@@ -34,43 +34,43 @@ matrix* data;
   /******************************************/
   // FOR DEMOING AVATAR MOVEMENT TESTING-- REMOVE FOR DEPLOYMENT --
   // Example 2D array with avatar
-  static char A_WITH_AVATAR[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
-    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
-    { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
-    { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,
-    { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
-    { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,
-    { 'E', '0', 'E', '1', 'A', '0', 'E', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
-    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-  };
+  /*static char A_WITH_AVATAR[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {*/
+    /*{ 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,*/
+    /*{ '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,*/
+    /*{ 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,*/
+    /*{ '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,*/
+    /*{ 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,*/
+    /*{ '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,*/
+    /*{ 'E', '0', 'E', '1', 'A', '0', 'E', '0', 'E' } ,*/
+    /*{ '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,*/
+    /*{ 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,*/
+  /*};*/
 
-  // Another simulation of avatar moving
-  static char A_WITH_AVATAR_TWO[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
-    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
-    { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
-    { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,
-    { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
-    { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,
-    { 'E', '0', 'E', '1', 'E', '0', 'A', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
-    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-  };
+  /*// Another simulation of avatar moving*/
+  /*static char A_WITH_AVATAR_TWO[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {*/
+    /*{ 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,*/
+    /*{ '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,*/
+    /*{ 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,*/
+    /*{ '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,*/
+    /*{ 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,*/
+    /*{ '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,*/
+    /*{ 'E', '0', 'E', '1', 'E', '0', 'A', '0', 'E' } ,*/
+    /*{ '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,*/
+    /*{ 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,*/
+  /*};*/
 
-  // Another simulation of avatar moving
-  static char A_WITH_AVATAR_THREE[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
-    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
-    { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
-    { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,
-    { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
-    { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,
-    { 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'A' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
-    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-  };
+  /*// Another simulation of avatar moving*/
+  /*static char A_WITH_AVATAR_THREE[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {*/
+    /*{ 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,*/
+    /*{ '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,*/
+    /*{ 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,*/
+    /*{ '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,*/
+    /*{ 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,*/
+    /*{ '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,*/
+    /*{ 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'A' } ,*/
+    /*{ '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,*/
+    /*{ 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,*/
+  /*};*/
   /*********************END*********************/
 
 
@@ -235,58 +235,58 @@ void render_maze(){
 }
 
 // Simulates the moving avatars
-void* print_i(void *ptr){
-  while (1){
-    if (flag == 0){
-      data->row = LEVEL_0_ROWS;
-      data->column = LEVEL_0_COLUMNS;
-      data->matrix = (char**)A_WITH_AVATAR;
+/*void* print_i(void *ptr){*/
+  /*while (1){*/
+    /*if (flag == 0){*/
+      /*data->row = LEVEL_0_ROWS;*/
+      /*data->column = LEVEL_0_COLUMNS;*/
+      /*data->matrix = (char**)A_WITH_AVATAR;*/
 
-      flag = 1;
-    } else if ( flag == 1 ){
-      data->row = LEVEL_0_ROWS;
-      data->column = LEVEL_0_COLUMNS;
-      data->matrix = (char**)A_WITH_AVATAR_TWO;
+      /*flag = 1;*/
+    /*} else if ( flag == 1 ){*/
+      /*data->row = LEVEL_0_ROWS;*/
+      /*data->column = LEVEL_0_COLUMNS;*/
+      /*data->matrix = (char**)A_WITH_AVATAR_TWO;*/
 
-      flag = 2;
-    } else if (flag == 2){
-      data->row = LEVEL_0_ROWS;
-      data->column = LEVEL_0_COLUMNS;
-      data->matrix = (char**)A_WITH_AVATAR_THREE;
+      /*flag = 2;*/
+    /*} else if (flag == 2){*/
+      /*data->row = LEVEL_0_ROWS;*/
+      /*data->column = LEVEL_0_COLUMNS;*/
+      /*data->matrix = (char**)A_WITH_AVATAR_THREE;*/
 
 
-      flag = 0;
-    }
+      /*flag = 0;*/
+    /*}*/
 
-  }
-}
+  /*}*/
+/*}*/
 
 /**
 * Function that will take in a 2D Array and update the graphics
 **/
-int main(int argc, char **argv){
+/*int main(int argc, char **argv){*/
   // (1) Init the GTK with arguments
-  gtk_init (&argc, &argv);
+  /*gtk_init (&argc, &argv);*/
 
   // Example use of the Matrix Structure
-  data = malloc(sizeof(matrix));
-  data->row = LEVEL_0_ROWS;
-  data->column = LEVEL_0_COLUMNS;
-  data->matrix = (char**)A;
+  /*data = malloc(sizeof(matrix));*/
+  /*data->row = LEVEL_0_ROWS;*/
+  /*data->column = LEVEL_0_COLUMNS;*/
+  /*data->matrix = (char**)A;*/
 
 
   // Simulates the avatars moving
-  pthread_t t1;
-  int iret1 = pthread_create(&t1, NULL, print_i, NULL);
-  if (iret1) {
-    fprintf(stderr,
-        "pthread_create failed, rc=%d\n",iret1);
-    exit(iret1);
-  }
+  /*pthread_t t1;*/
+  /*int iret1 = pthread_create(&t1, NULL, print_i, NULL);*/
+  /*if (iret1) {*/
+    /*fprintf(stderr,*/
+        /*"pthread_create failed, rc=%d\n",iret1);*/
+    /*exit(iret1);*/
+  /*}*/
 
-  // (2) Start the maze that takes from the global MAZE
-  render_maze();
+   /*(2) Start the maze that takes from the global MAZE*/
+  /*render_maze();*/
 
 
-  return 0;
-}
+  /*return 0;*/
+/*}*/

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "header.h"
+#include "graphics.h"
 #include "amazing_client.h"
 
 void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
