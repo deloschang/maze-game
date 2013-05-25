@@ -25,6 +25,7 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
      int wall_y;
      int distance=0;
      cell* v;
+     int is_found=0;
      while (q->head!=NULL){
 	v=dequeue(q);
         //distance+=1;
@@ -33,6 +34,7 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
               //cell* g=init_cell(adj_x,adj_y,0,0,v);
               //int* path=construct_path(v);
               construct_path(v,path);
+	      is_found=1;
               //free_queue(container);
 	      //free_queue(q);
 	      //free(q);
@@ -40,19 +42,19 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
               //return path;
         }
 	     
-	for (int i=0;i<4;i++){
+	//for (int i=0;i<4;i++){
 		
-	  int order[4]={0,1,2,3};
-	  int temp;
-	  for (int k=0;k<100;k++){
-	     int r1=rand()%4;
-	     int r2=rand()%4;
-	     temp=order[r1];
-	     order[r1]=order[r2];
-	     order[r2]=temp;
-	  }
+	int order[4]={0,1,2,3};
+	int temp;
+	for (int k=0;k<100;k++){
+	   int r1=rand()%4;
+	   int r2=rand()%4;
+	   temp=order[r1];
+	   order[r1]=order[r2];
+	   order[r2]=temp;
+	}
 
-	  //for (int k=0;k<4;k++){
+	for (int i=0;i<4;i++){
 	    // printf("order[%d] %d\n",k,order[k]);
 	  //}
 	  //shuffle(&order);
@@ -91,17 +93,21 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
 		     enqueue(container,con_g);
 		     enqueue(q,g);
 	          }else{
-	//		printf("already visited\n");
+			//printf("already visited\n");
 		  }
 		
 	      }else{
-	//	  printf("wall\n");
+		  //printf("wall\n");
 	      }
 	   }else{
-	//	printf("out of bounds\n");
+		//printf("out of bounds\n");
 	   }
 
 	}     
+     }
+     if (!is_found){
+	printf("path not found, shouldnt happend\n");
+	path[0]=8;
      }
      //printf("freeing\n");
      //free_queue(container);

@@ -34,6 +34,7 @@ typedef struct _matrix {
 matrix* convert_map();
 void mark_as_wall(XYPOS* wall);
 XYPOS* get_average();
+XYPOS* get_goal();
 void update_shared_map();
 void render_maze();
 //shared_map* get_shared_map();

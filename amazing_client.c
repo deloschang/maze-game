@@ -215,12 +215,12 @@ int main(int argc,char* argv[]){
     }
 
     //condition=0;
-    goal=malloc(sizeof(XYPOS));
-    goal->xPos=2;
-    goal->yPos=2;
+    //goal=malloc(sizeof(XYPOS));
+    //goal->xPos=2;
+    //goal->yPos=2;
     matrix* m=convert_map();
     //path=find_path(m,cur_pos,goal);
-    find_path(m,cur_pos,goal,path);
+    //find_path(m,cur_pos,goal,path);
     //print_path(m,cur_pos,goal);
 
     if (!semaphore_v(sem_id)){
@@ -232,7 +232,7 @@ int main(int argc,char* argv[]){
 
 
 
-    while (condition && test_counter<50){
+    while (condition && test_counter<15){
 
 	if (turn_num==avatar_id){
 	   if (mat!=NULL){
@@ -245,20 +245,24 @@ int main(int argc,char* argv[]){
    	   }
 	   printf("avatar's turn: %d\n",avatar_id);
 	   matrix* mat=convert_map();
-	   if (goal!=NULL){
+	   //if (goal!=NULL){
 	       //free(goal);
-	   }
+	   //}
 	   //printf("getting average %d\n",avatar_id);
 	   //goal=get_average();
-	   goal=malloc(sizeof(XYPOS));
-           goal->xPos=2;
-	   goal->yPos=2;
+	   for (int l=0;l<100;l++){
+		path[l]=-5;
+	   }
+	   goal=get_goal();
+	   //goal=malloc(sizeof(XYPOS));
+           //goal->xPos=2;
+	   //goal->yPos=2;
 	
 	   printf("goal for avatar  %d is (%d,%d)\n",avatar_id,
 				goal->xPos*2,goal->yPos*2);
 	   
-	   //path=find_path(mat,cur_pos,goal);
-
+	   find_path(mat,cur_pos,goal,path);
+	   path_count=0;
 	   //int next_move=find_move(cur_pos,goal,mat);
 	   //if (next_move==-1){
 	     //   printf("No valid move is possible. Exiting\n");
@@ -272,10 +276,10 @@ int main(int argc,char* argv[]){
 	  if (path_count>=0){
     	      next_move=path[path_count];
 	      path_count++;
+	  
+          }else{
+ 	       next_move=8;
 	  }
-           else{
- 		next_move=8;
-	   }
 	   printf("Next move for avatar: %d is %d\n",avatar_id,next_move);
 	   sendline->message_type=htonl(AM_AVATAR_MOVE);
 	   sendline->msg.avatar_move.AvatarId=htonl(avatar_id);
@@ -358,10 +362,10 @@ int main(int argc,char* argv[]){
 		    }
 		    free(wall);
 		    //free(path);
- 		    mat=convert_map();
+ 		    //mat=convert_map();
 		    //print_converted_map();
  		    //path=find_path(mat,cur_pos,goal);
- 		    find_path(mat,cur_pos,goal,path);
+ 		    //find_path(mat,cur_pos,goal,path);
 		    //if (path==NULL){
 		//	printf("failed to find path\n");
 			//exit(1);
@@ -371,7 +375,7 @@ int main(int argc,char* argv[]){
 			//printf("hi\n");
 			//fflush(stdout);
 			//print_path(path);
-	       	    path_count=0;
+	       	    //path_count=0;
 		    //}
 		    //path_count=0;
 		    //printf("avatar %d ran into wall\n",avatar_id);
@@ -395,11 +399,24 @@ int main(int argc,char* argv[]){
 		 //FOR GRAPHICS
 		 //free(data);
 		 //data=convert_map();
+		 char av_id_str[50];
+		 BZERO(av_id_str,50);
+		 snprintf(av_id_str,50,"%d",avatar_id);
 	         char coord[50];
 	         BZERO(coord,50);
 	         snprintf(coord,50,"%d",cur_pos->xPos);
 	         char log_file_msg[AM_MAX_MESSAGE];
 	         BZERO(log_file_msg,AM_MAX_MESSAGE);
+
+		 strncpy(log_file_msg,"echo ' ",AM_MAX_MESSAGE);
+		 strncat(log_file_msg,"Avatars move: ",AM_MAX_MESSAGE);
+		 strncat(log_file_msg,av_id_str,AM_MAX_MESSAGE);
+		 strncat(log_file_msg," >> ",AM_MAX_MESSAGE);
+		 strncat(log_file_msg,log_file,AM_MAX_MESSAGE);
+		 system(log_file_msg);
+
+
+		 BZERO(log_file_msg,AM_MAX_MESSAGE);
 	         strncpy(log_file_msg,"echo '",AM_MAX_MESSAGE);
 	         strncat(log_file_msg,"Avatar ",AM_MAX_MESSAGE);
 	         strncat(log_file_msg,argv[1],AM_MAX_MESSAGE);
@@ -612,6 +629,86 @@ void mark_as_wall(XYPOS* wall){
      printf("marking wall at %d,%d\n",wall->xPos,wall->yPos);
 }
 
+
+XYPOS* get_goal(){
+     printf("Calculating goal\n");
+     //shared_map* sh_map=get_shared_map();
+     matrix* mat=convert_map();
+     int path[100];
+     XYPOS* avatar_list[10];
+     int index;
+     for (int i=0;i<mat->row;i++){
+	for (int j=0;j<mat->column;j++){
+	      if (mat->matrix[i][j]=='A'){
+		printf("Found avatar %d\n",index);
+		XYPOS* av=malloc(sizeof(XYPOS));
+		av->xPos=j/2;
+		av->yPos=i/2;
+	        avatar_list[index]=av;
+		index++;
+	      }
+	}
+     }
+     int min_dist=10000;
+     int min_path[100];
+     int min_avatar1;
+     //int min_avatar2;
+     int counter=0;
+     for (int i=0;i<index;i++){
+	for (int j=i+1;j<index;j++){
+	     for (int k=0;k<100;k++){
+		path[k]=-5;
+	     }
+	     printf("looking for a path between (%d,%d) and (%d,%d)\n",
+		avatar_list[i]->xPos,avatar_list[i]->yPos,
+		avatar_list[j]->xPos,avatar_list[j]->yPos);
+	     find_path(mat,avatar_list[i],avatar_list[j],path);
+	     counter=0;
+	     while (path[counter]!=-5 && counter<100){
+		counter++;
+	     }
+	     if (counter<min_dist && counter!=0){
+		min_dist=counter;
+		min_avatar1=i;
+		//min_avatar2=j;
+		for (int k=0;k<100;k++){
+		    min_path[k]=-5;
+		}
+		for (int k=0;k<counter;k++){
+		    min_path[k]=path[k];
+		}
+	     }
+	}
+     }
+
+     XYPOS* start=avatar_list[min_avatar1];
+     XYPOS* goal=malloc(sizeof(XYPOS));
+     goal->xPos=start->xPos;
+     goal->yPos=start->yPos;
+     if (counter==1){
+	//goal->xPos=start->xPos;
+	//goal->yPos=start->yPos;
+	return goal;
+     }else{
+        for (int i=0;i<counter/2;i++){
+	    if (min_path[i]==0){
+		goal->xPos-=1;	
+	    }else if (min_path[i]==1){
+		goal->yPos-=1;
+	    }else if (min_path[i]==2){
+		goal->yPos+=1;
+	    }else if (min_path[i]==3){
+		goal->xPos+=1;
+	    }
+	}
+     }
+     for (int i=0;i<index;i++){
+	free(avatar_list[i]);
+     }
+     return goal;
+
+}
+
 XYPOS* get_average(){
     //printf("inside get average\n");
     shared_map* sh_map=get_shared_map();
@@ -638,7 +735,7 @@ XYPOS* get_average(){
     goal->xPos=sum_x/count/2;
     goal->yPos=sum_y/count/2;
     //printf("inside get average\n");
-    printf("goal :(%d,%d)\n",goal->yPos,goal->xPos);
+    //printf("goal :(%d,%d)\n",goal->yPos,goal->xPos);
     return goal;
 
 }
