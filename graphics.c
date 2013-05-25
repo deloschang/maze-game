@@ -254,33 +254,33 @@ void render_maze(){
 /**
 * Function that will take in a 2D Array and update the graphics
 **/
-int main(int argc, char **argv){
-   /*[>(1) Init the GTK with arguments<]*/
-  gtk_init (&argc, &argv);
+/*int main(int argc, char **argv){*/
+   /*[>[>(1) Init the GTK with arguments<]<]*/
+  /*gtk_init (&argc, &argv);*/
 
-   /*[>Example use of the Matrix Structure<]*/
-  data = malloc(sizeof(matrix));
-  data->row = LEVEL_0_ROWS;
-  data->column = LEVEL_0_COLUMNS;
-  /*data->matrix = (char**)A;*/
+   /*[>[>Example use of the Matrix Structure<]<]*/
+  /*data = malloc(sizeof(matrix));*/
+  /*data->row = LEVEL_0_ROWS;*/
+  /*data->column = LEVEL_0_COLUMNS;*/
+  /*[>data->matrix = (char**)A;<]*/
 
-  /*data->matrix = A;*/
+  /*[>data->matrix = A;<]*/
     
-    matrix* A = malloc(sizeof(matrix));
-    A->row = LEVEL_0_ROWS;
-    A->column = LEVEL_0_COLUMNS;
+    /*matrix* A = malloc(sizeof(matrix));*/
+    /*A->row = LEVEL_0_ROWS;*/
+    /*A->column = LEVEL_0_COLUMNS;*/
 
-  for (int i = 0; i < A->row; i++){
-      for (int j = 0; j < A->column; j++){
-          A->matrix[i][j] = Array[i][j];
-      }
-  }
+  /*for (int i = 0; i < A->row; i++){*/
+      /*for (int j = 0; j < A->column; j++){*/
+          /*A->matrix[i][j] = Array[i][j];*/
+      /*}*/
+  /*}*/
   
-  for (int i = 0; i < data->row; i++){
-      for (int j = 0; j < data->column; j++){
-          data->matrix[i][j] = A->matrix[i][j];
-      }
-  }
+  /*for (int i = 0; i < data->row; i++){*/
+      /*for (int j = 0; j < data->column; j++){*/
+          /*data->matrix[i][j] = A->matrix[i][j];*/
+      /*}*/
+  /*}*/
 
 
    /*[>Simulates the avatars moving<]*/
@@ -293,8 +293,8 @@ int main(int argc, char **argv){
   /*[>}<]*/
 
    /*[>(2) Start the maze that takes from the global MAZE<]*/
-  render_maze();
+  /*render_maze();*/
 
 
-  return 0;
-}
+  /*return 0;*/
+/*}*/

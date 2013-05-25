@@ -237,7 +237,7 @@ int main(int argc,char* argv[]){
 
 
 
-    while (condition && test_counter<15){
+    while (condition && test_counter<50){
 
         if (turn_num==avatar_id){
             if (mat!=NULL){
@@ -418,7 +418,7 @@ int main(int argc,char* argv[]){
                 strncpy(log_file_msg,"echo ' ",AM_MAX_MESSAGE);
                 strncat(log_file_msg,"Avatars move: ",AM_MAX_MESSAGE);
                 strncat(log_file_msg,av_id_str,AM_MAX_MESSAGE);
-                strncat(log_file_msg," >> ",AM_MAX_MESSAGE);
+                strncat(log_file_msg," ' >> ",AM_MAX_MESSAGE);
                 strncat(log_file_msg,log_file,AM_MAX_MESSAGE);
                 system(log_file_msg);
 
