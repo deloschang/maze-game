@@ -14,8 +14,6 @@
 #define LEVEL_0_ROWS 9  // (2n+1) adjustment 
 #define LEVEL_0_COLUMNS 9
 
-#define UPDATE_INTERVAL 1 // for updating the canvas every 1 sec
-
 #define min(x,y)   ((x)>(y))?(y):(x)
 
 //! Zero out the 2D array
@@ -44,10 +42,10 @@
 
 /* --- Structures / Types --- */
 // Example struct to pass into the graphics function.
-typedef struct _matrix {
-  int row;
-  int column;
-  char** matrix;
-} matrix;
+//typedef struct _matrix {
+  //int row;
+  //int column;
+ // char matrix[200][200];
+//} matrix;
 
 #endif

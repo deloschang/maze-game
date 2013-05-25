@@ -1,14 +1,14 @@
-/* 
+/*
 * Filename: graphics.c
 * This file will render the maze graphically given the 2D int array
 */
 
-#include <stdlib.h>                          // for calloc
-#include <string.h>                          // for strlen
-#include <gtk/gtk.h>                         // for gtk functionality
-#include "header.h"                         // for gtk functionality
+#include <stdlib.h> // for calloc
+#include <string.h> // for strlen
+#include <gtk/gtk.h> // for gtk functionality
+#include "header.h" // for gtk functionality
 
-  // Global map struct should go here. 
+  // Global map struct should go here.
     matrix* data;
   // Call render_maze() once and it will rerender the global
   // map struct (data) every 1 sec.
@@ -30,7 +30,7 @@
     *area;
 
   /******************************************/
-  //  FOR DEMOING AVATAR MOVEMENT TESTING-- REMOVE FOR DEPLOYMENT -- 
+  // FOR DEMOING AVATAR MOVEMENT TESTING-- REMOVE FOR DEPLOYMENT --
   // Example 2D array with avatar
   static char A_WITH_AVATAR[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
     { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
@@ -76,8 +76,8 @@
 int flag = 0; // used to simulate avatar moving in sep thread
 
 /**
- * Takes the 2D Array and prints it onto the terminal
- */
+* Takes the 2D Array and prints it onto the terminal
+*/
 void render_2D_array(int row, int column, char array[row][column]){
   // Print the level 0 array
   for (int i = 0; i < row; i++){
@@ -89,18 +89,18 @@ void render_2D_array(int row, int column, char array[row][column]){
 }
 
 /**
- *  Retrieves the char at the given row and column 
- */
-char retrieve_field(int row, int column, char array[row][column], 
+* Retrieves the char at the given row and column
+*/
+char retrieve_field(int row, int column, char array[row][column],
   int chooseRow, int chooseColumn){
   return array[chooseRow][chooseColumn];
 }
 
 static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *data){
-  int       i, j, width, height, maze_width, maze_column, x, y, flag;
-  double    value, convert_step_x, convert_step_y;
-  char      field;
-  cairo_t  *cr;
+  int i, j, width, height, maze_width, maze_column, x, y, flag;
+  double value, convert_step_x, convert_step_y;
+  char field;
+  cairo_t *cr;
 
   cr = gdk_cairo_create (event->window);
   width = gdk_window_get_width (event->window);
@@ -119,8 +119,8 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
   /*render_2D_array(((matrix*)data)->row, ((matrix*)data)->column, ((matrix*)data)->matrix);*/
   /** EXAMPLE **/
 
-  x = 0;    // x coordinate to draw at
-  y = 0 ;   // y coordinate to draw at
+  x = 0; // x coordinate to draw at
+  y = 0 ; // y coordinate to draw at
 
   flag = 0; // checks if it is an odd or even row in 2D array
 
@@ -131,7 +131,7 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
       /*value = g_random_double ();*/
       /*cairo_set_source_rgb (cr, value, value, value);*/
 
-      // Parse the 2D Array 
+      // Parse the 2D Array
       field = retrieve_field(maze_width, maze_column, ((matrix*)data)->matrix, i, j);
       if ( field == 'E'){
         x += convert_step_x;
@@ -169,7 +169,7 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
       cairo_stroke(cr);
     }
 
-    // reset the x back to 0  (start a new row)
+    // reset the x back to 0 (start a new row)
     // Depending if odd or even row, horizontal walls are drawn differently
     if ( flag == 0 ){
       x = 0;
@@ -189,9 +189,9 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
 
 
 /**
- * timer_tic 
- * redraws the canvas area every UPDATE_INTERVAL 
- **/
+* timer_tic
+* redraws the canvas area every UPDATE_INTERVAL
+**/
 gboolean timer_tic(gpointer data){
   gtk_widget_queue_draw(area);
   return TRUE;
@@ -216,7 +216,7 @@ void render_maze(){
   gtk_box_pack_start (GTK_BOX (vbox), area, TRUE, TRUE, 0);
 
   /* Connect refresh button (we need pointer to drawing area, this is
-   * why connection is delayed until here). */
+* why connection is delayed until here). */
   /*g_signal_connect_swapped (button, "clicked",*/
                             /*G_CALLBACK (gtk_widget_queue_draw), area);*/
 
@@ -227,7 +227,7 @@ void render_maze(){
 
   gtk_main();
 
-  // Clean up 
+  // Clean up
   g_source_remove(timer);
   free(data);
 }
@@ -260,13 +260,13 @@ void* print_i(void *ptr){
 }
 
 /**
- * Function that will take in a 2D Array and update the graphics
- **/
-int main(int argc,  char **argv){
+* Function that will take in a 2D Array and update the graphics
+**/
+int main(int argc, char **argv){
   // (1) Init the GTK with arguments
   gtk_init (&argc, &argv);
 
-  // Example use of the Matrix Structure 
+  // Example use of the Matrix Structure
   data = malloc(sizeof(matrix));
   data->row = LEVEL_0_ROWS;
   data->column = LEVEL_0_COLUMNS;
@@ -277,16 +277,14 @@ int main(int argc,  char **argv){
   pthread_t t1;
   int iret1 = pthread_create(&t1, NULL, print_i, NULL);
   if (iret1) {
-    fprintf(stderr, 
+    fprintf(stderr,
         "pthread_create failed, rc=%d\n",iret1);
     exit(iret1);
-  }  
+  }
 
-  // (2) Start the maze  that takes from the global MAZE
+  // (2) Start the maze that takes from the global MAZE
   render_maze();
 
 
   return 0;
 }
-
-

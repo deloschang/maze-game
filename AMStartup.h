@@ -13,7 +13,8 @@ void create_shared_map(int w,int h);
 typedef struct _shared_map{
     int row;
     int col;
-    int** map;
+    int map[MAX_DIM][MAX_DIM];
+    int turnID;
 
 } shared_map;
 
