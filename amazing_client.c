@@ -38,7 +38,7 @@
 #include "amazing.h"
 #include "amazing_client.h"
 #include <unistd.h>
-#include "header.h"
+#include "graphics.h"
 //#include "algorithm.h"
 #include <sys/sem.h>
 #include "semun.h"
