@@ -77,6 +77,12 @@ debug: $(SRCS)
 	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC2) $(OBJS2) $(PKGFLAGS)
 	gdb --args graphics
 
+debug2: $(SRCS)
+	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS) $(PKGFLAGS)
+	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG) #future library
+	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) $(PKGFLAGS)
+	gdb set follow-fork-mode child --args ./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
+
 #debug2: $(SRCS)
 	#$(CC) $(CFLAGS) -g -ggdb -c $(SRCS)
 	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG)
