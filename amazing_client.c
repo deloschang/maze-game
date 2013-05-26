@@ -46,7 +46,6 @@
 
 #include <pthread.h>
 
-
 //semaphore related functions
 //static int set_semvalue(int sem_id);
 //static void del_semvalue(int sem_id);

@@ -6,9 +6,9 @@ CFLAGS1 = -Wall
 PKGFLAGS = `pkg-config --cflags gtk+-2.0 --libs gtk+-2.0`
 SVIDFLAGS = -D_SVID_SOURCE=1 
 
-EXEC = startup
-OBJS = AMStartup.o
-SRCS = AMStartup.c 
+EXEC4 = startup
+OBJS4 = AMStartup.o
+SRCS4 = AMStartup.c 
 
 EXEC2 = graphics
 OBJS2 = graphics.o
@@ -18,9 +18,9 @@ SRCS2 = graphics.c
 #OBJS3 = algorithm.o
 #SRCS3 = algorithm.c 
 
-EXEC4 = amazing_client
-OBJS4 = amazing_client.o bfs.o sem1.o graphics.o
-SRCS4 = amazing_client.c bfs.c sem1.c graphics.c 
+EXEC = amazing_client
+OBJS = amazing_client.o bfs.o sem1.o graphics.o
+SRCS = amazing_client.c bfs.c sem1.c graphics.c 
 
 # Future library details
 #UTILDIR=../utils/
@@ -33,8 +33,8 @@ SRCS4 = amazing_client.c bfs.c sem1.c graphics.c
 
 # Compile startup and Amazing client
 $(EXEC): $(OBJS)
-	$(CC) $(CFLAGS) -o $(EXEC) $(OBJS) $(PKGFLAGS)
-	$(CC) $(CFLAGS) $(SVIDFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
+	$(CC) $(CFLAGS) $(SVIDFLAGS) -o $(EXEC) $(OBJS) $(PKGFLAGS)
+	$(CC) $(CFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
 
 	# test run
 	./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
@@ -42,14 +42,15 @@ $(EXEC): $(OBJS)
 	make clean
 
 $(OBJS): $(SRCS) 
-	$(CC) $(CFLAGS) -c $(SRCS) $(PKGFLAGS)
+	$(CC) $(CFLAGS) $(SVIDFLAGS) -c $(SRCS) $(PKGFLAGS)
+	$(CC) $(CFLAGS) -c $(SRCS4) $(PKGFLAGS)
 
 # Amazing Client
-$(EXEC4): $(OBJS4)   
-	$(CC) $(CFLAGS) $(SVIDFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
+#$(EXEC4): $(OBJS4)   
+	#$(CC) $(CFLAGS) $(SVIDFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
 
-$(OBJS4): $(SRCS4) 
-	$(CC) $(CFLAGS) $(SVIDFLAGS) -c $(SRCS4) $(PKGFLAGS)
+#$(OBJS4): $(SRCS4) 
+	#$(CC) $(CFLAGS) -c $(SRCS4) $(PKGFLAGS)
 
 #=====================================================#
 #unit: $(SRCS2) 
@@ -81,7 +82,7 @@ debug2: $(SRCS)
 	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS) $(PKGFLAGS)
 	#$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) -L$(UTILDIR) $(UTILFLAG) #future library
 	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC) $(OBJS) $(PKGFLAGS)
-	gdb set follow-fork-mode child --args ./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
+	gdb --args ./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
 
 #debug2: $(SRCS)
 	#$(CC) $(CFLAGS) -g -ggdb -c $(SRCS)
@@ -117,6 +118,7 @@ clean:
 	rm -f amazing_client
 
 cleanlog:
-	rm -f *log.*
+	rm -f *.log
+
 
 

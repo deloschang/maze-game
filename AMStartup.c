@@ -20,7 +20,6 @@
 //
 //5)Launches Amazing client program
 //
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -37,7 +36,6 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <sys/shm.h>
-
 int main(int argc,char* argv[]){
 
   char host_name[AM_MAX_MESSAGE];
