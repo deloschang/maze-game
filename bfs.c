@@ -18,6 +18,7 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
 
   cell* first=init_cell(start->xPos*2,start->yPos*2,0,0,NULL);
   cell* con_first=init_cell(start->xPos*2,start->yPos*2,0,0,NULL);
+
   q->head=first;
   container->head=con_first;
 
@@ -32,10 +33,11 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
   cell* v;
   int is_found=0;
   while (q->head!=NULL){
-    v=dequeue(q);
+    v = dequeue(q);
     //distance+=1;
     //printf("exploring (%d,%d)\n",v->x,v->y);
-    if (v->x==goal->xPos*2 && v->y==goal->yPos*2){
+
+    if ( (v->x == goal->xPos*2) && (v->y == goal->yPos*2) ){
       //cell* g=init_cell(adj_x,adj_y,0,0,v);
       //int* path=construct_path(v);
       construct_path(v,path);
@@ -51,6 +53,7 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
 
     int order[4]={0,1,2,3};
     int temp;
+
     for (int k=0;k<100;k++){
       int r1=rand()%4;
       int r2=rand()%4;
@@ -85,30 +88,35 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
         wall_x=v->x+1;
         wall_y=v->y;
       }
-    //printf("checking coordinates (%d,%d)\n",adj_x,adj_y);
-    if (adj_x>=0 && adj_y>=0 && wall_x>=0 && wall_y>=0 &&
-        adj_x<mat->column && wall_x<mat->column && adj_y<mat->row &&
-        wall_y<mat->row){
-      if (mat->matrix[wall_y][wall_x]!='1' && 
-          mat->matrix[wall_y][wall_x]!='_'){
-        if (contains(container,adj_x,adj_y)==0){
-          //printf("checked\n");
-          cell* g=init_cell(adj_x,adj_y,v->dist+1,0,v);
-          cell* con_g=init_cell(adj_x,adj_y,v->dist+1,0,v);
-          enqueue(container,con_g);
-          enqueue(q,g);
+
+      //printf("checking coordinates (%d,%d)\n",adj_x,adj_y);
+      if (adj_x>=0 && adj_y>=0 && wall_x>=0 && wall_y>=0 &&
+          adj_x<mat->column && wall_x<mat->column && adj_y<mat->row &&
+          wall_y<mat->row){
+        if (mat->matrix[wall_y][wall_x]!='1' && 
+            mat->matrix[wall_y][wall_x]!='_'){
+
+          if (contains(container,adj_x,adj_y)==0){
+            //printf("checked\n");
+            cell* g=init_cell(adj_x,adj_y,v->dist+1,0,v);
+            cell* con_g=init_cell(adj_x,adj_y,v->dist+1,0,v);
+
+            enqueue(container,con_g);
+            enqueue(q,g);
+
+          } else {
+            //printf("already visited\n");
+          }
+
         }else{
-          //printf("already visited\n");
+          //printf("wall\n");
         }
 
       }else{
-        //printf("wall\n");
+        //printf("out of bounds\n");
       }
-    }else{
-      //printf("out of bounds\n");
-    }
+    }     
 
-  }     
   }
 
   if (!is_found){
@@ -116,12 +124,14 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
     path[0]=8;
   }
   //printf("freeing\n");
-  //free_queue(container);
-  //free_queue(q);
-  //free(q);
+  free_queue(container);
+  free(container);
+
+  /*free_queue(q);*/
+  /*free(q);*/
+
   //free(container);
   //return NULL;
-
 
 }
 
@@ -270,5 +280,4 @@ void construct_path(cell* c,int temp_path[]){
       array[r1]=array[r2];
       array[r2]=temp;
     }
-
   }
