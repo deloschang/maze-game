@@ -700,6 +700,9 @@ int main(int argc,char* argv[]){
                         avatar_list[j]->xPos,avatar_list[j]->yPos);
                 find_path(mat,avatar_list[i],avatar_list[j],path);
                 counter=0;
+
+                free(mat);
+
                 while (path[counter]!=-5 && counter<100){
                     counter++;
                 }

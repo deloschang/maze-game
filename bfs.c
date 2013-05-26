@@ -12,8 +12,10 @@
 void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
     queue* container=malloc(sizeof(queue));
     queue* q=malloc(sizeof(queue));
+
     MALLOC_CHECK(q);
     MALLOC_CHECK(container);
+
     cell* first=init_cell(start->xPos*2,start->yPos*2,0,0,NULL);
     cell* con_first=init_cell(start->xPos*2,start->yPos*2,0,0,NULL);
     q->head=first;
@@ -38,8 +40,8 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
             //int* path=construct_path(v);
             construct_path(v,path);
             is_found=1;
-            //free_queue(container);
-            //free_queue(q);
+            /*free_queue(container);*/
+            /*free_queue(q);*/
             //free(q);
             //free(container);
             //return path;
