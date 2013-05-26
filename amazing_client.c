@@ -215,10 +215,14 @@ int main(int argc,char* argv[]){
     int condition=1;
     int test_counter=0;
     XYPOS* cur_pos=malloc(sizeof(XYPOS));
-    cur_pos=init_pos;
+    /*cur_pos=init_pos;*/
+    cur_pos->xPos = init_pos->xPos;
+    cur_pos->yPos = init_pos->yPos;
+
     //printf("avatars %d initial position (%d,%d)\n",avatar_id,init_pos->xPos,
     //							init_pos->yPos);
     XYPOS* new_pos=malloc(sizeof(XYPOS));
+    free(init_pos);
 
     // unused variables
     /*XYPOS* prev = NULL;*/
@@ -288,6 +292,8 @@ int main(int argc,char* argv[]){
 
             find_path(mat,cur_pos,goal,path);
             path_count=0;
+
+            free(mat);
             //int next_move=find_move(cur_pos,goal,mat);
             //if (next_move==-1){
             //   printf("No valid move is possible. Exiting\n");
@@ -425,6 +431,8 @@ int main(int argc,char* argv[]){
                     next_move=8;
                 }
 
+                free(goal);
+
                 //free(new_pos);
 
                 //FOR GRAPHICS
@@ -549,8 +557,8 @@ int main(int argc,char* argv[]){
         free(recvline);
         free(sendline);
         //free(data);
-        //free(new_pos);
-        //free(cur_pos);
+        free(new_pos);
+        free(cur_pos);
 
         //free shared map
         if (avatar_id==0){
@@ -875,6 +883,7 @@ int main(int argc,char* argv[]){
 
         printf("\n 3 ***** \n");
 
+        free(graphics_map);
     }
 
 
