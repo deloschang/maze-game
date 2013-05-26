@@ -47,7 +47,7 @@ typedef struct _matrix {
 
 // Global struct used for graphics
 //extern matrix* data = malloc(sizeof(matrix));
-extern matrix* data;
+//extern matrix* data;
 
 
 //#if defined (__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)

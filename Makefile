@@ -100,7 +100,7 @@ valgrind: $(OBJS)
 	$(CC) $(CFLAGS) $(SVIDFLAGS) -g -ggdb -o $(EXEC) $(OBJS) $(PKGFLAGS)
 	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
 
-	valgrind --tool=memcheck --leak-check=full ./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
+	valgrind --trace-children=yes --tool=memcheck --leak-check=full ./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
 	make clean
 	./cleansharedmem.sh
 
@@ -126,4 +126,5 @@ clean:
 	rm -f algo
 	rm -f amazing_client
 
-clean
+cleanlog:
+	rm -f *.log

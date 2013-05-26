@@ -59,7 +59,9 @@ void* start_graphics(void *ptr){
     return NULL;
 }
 
-extern matrix* data;
+extern char data2[DIM][DIM];
+extern int data_row_length;
+extern int data_column_length;
 
 int main(int argc,char* argv[]){
     //printf("amazing client started\n");
@@ -73,11 +75,9 @@ int main(int argc,char* argv[]){
             printf("failed to initialize semaphore\n");
             exit(1);
         }
-
-        gtk_init(&argc, &argv);
-        data = malloc(sizeof(matrix));
         update_graphics();
 
+        gtk_init(&argc, &argv);
 
         pthread_t t1;
         int iret1 = pthread_create(&t1, NULL, start_graphics, NULL);
@@ -840,21 +840,40 @@ int main(int argc,char* argv[]){
 
     // Called each time to update the graphics map
     void update_graphics(){
+
+        printf("\n 1 ***** \n");
         // retrieve the struct from the converted map
         matrix* graphics_map = convert_map();
 
+        printf("\n 1.5 ***** \n");
+
 
         // Create the global struct that is used for the graphics map
-        data->row = graphics_map->row;
-        data->column = graphics_map->column;
+        /*data->row = graphics_map->row;*/
+        /*data->column = graphics_map->column;*/
 
-        for (int i = 0; i < data->row; i++){
-            for (int j = 0; j < data->column; j++){
-              data->matrix[i][j] = graphics_map->matrix[i][j];
-              printf("%c ", data->matrix[i][j]);
-            }
-            printf("\n");
+        data_row_length = graphics_map->row;
+        data_column_length = graphics_map->column;
+
+        printf("\n 2 ***** \n");
+
+        /*for (int i = 0; i < DIM; i++){*/
+          /*for (int j = 0; j < DIM; j++){*/
+            /*data[i][j] = '\0';*/
+          /*}*/
+        /*}*/
+
+        for (int i = 0; i < graphics_map->row; i++){
+          for (int j = 0; j < graphics_map->column; j++){
+            /*data->matrix[i][j] = graphics_map->matrix[i][j];*/
+            data2[i][j] = graphics_map->matrix[i][j];
+            /*printf("%c ", data->matrix[i][j]);*/
+            printf("%c ", data2[i][j]);
+          }
+          printf("\n");
         }
+
+        printf("\n 3 ***** \n");
 
     }
 

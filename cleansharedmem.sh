@@ -15,5 +15,8 @@ do
   fi
 done
 
+
+ps | grep amazing_client | awk {'print $4'} | xargs kill -9
+
 exit 0;
 

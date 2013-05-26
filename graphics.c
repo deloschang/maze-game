@@ -12,7 +12,9 @@
 
   // Global map struct should go here.
   /*matrix* data = malloc(sizeof(matrix*));*/
-  matrix* data;
+  char data2[DIM][DIM];
+  int data_row_length =0;
+  int data_column_length =0;
 
   // Call render_maze() once and it will rerender the global
   // map struct (data) every 1 sec.
@@ -107,8 +109,12 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
 
 
   // Localize the data
-  maze_width = ((matrix*)data)->row;
-  maze_column = ((matrix*)data)->column;
+  /*maze_width = ((matrix*)data)->row;*/
+  /*maze_column = ((matrix*)data)->column;*/
+
+  maze_width = data_row_length;
+  maze_column = data_column_length;
+
   // converting back to maze width / height (e.g. Level 0 maze would be 5 rows)
   convert_step_x = (double)width / (convertBack(maze_width));
   convert_step_y = (double)height / (convertBack(maze_column));
@@ -126,7 +132,9 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
       /*cairo_set_source_rgb (cr, value, value, value);*/
 
       // Parse the 2D Array
-      field = ((matrix*)data)->matrix[i][j];
+      /*field = ((matrix*)data)->matrix[i][j];*/
+      field = data2[i][j];
+
       if ( field == 'E'){
         x += convert_step_x;
 
@@ -209,7 +217,8 @@ void render_maze(){
 
   area = gtk_drawing_area_new ();
 
-  g_signal_connect (area, "expose-event", G_CALLBACK (cb_expose), data);
+  /*g_signal_connect (area, "expose-event", G_CALLBACK (cb_expose), data);*/
+  g_signal_connect (area, "expose-event", G_CALLBACK (cb_expose), NULL);
   gtk_box_pack_start (GTK_BOX (vbox), area, TRUE, TRUE, 0);
 
   /* Connect refresh button (we need pointer to drawing area, this is
@@ -228,6 +237,7 @@ void render_maze(){
   g_source_remove(timer);
   /*free(data);*/
 }
+
 
 // Simulates the moving avatars
 /*void* print_i(void *ptr){*/
