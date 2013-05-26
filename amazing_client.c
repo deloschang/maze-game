@@ -499,7 +499,8 @@ int main(int argc,char* argv[]){
                 printf("semv failed\n");
                 exit(1);
             }
-            sleep(1);
+            /*sleep(2);*/
+
             printf("\n 3 ***** \n");
 
         }else{
@@ -511,7 +512,7 @@ int main(int argc,char* argv[]){
             //}
 
           printf("\n B ***** \n");
-            sleep(1);
+          sleep(1);
           printf("\n C ***** \n");
 
             if (recv(sockfd,recvline,sizeof(AM_MESSAGE),0)==0){
@@ -557,7 +558,7 @@ int main(int argc,char* argv[]){
         printf("\n 4 ***** \n");
 
         // troublemaker
-        sleep(2);
+        /*sleep(0);*/
         printf("\n 5 ***** \n");
 
         printf("After sleep \n");
@@ -566,6 +567,7 @@ int main(int argc,char* argv[]){
         test_counter++;
         printf("\n 6 ***** \n");
         //system("sleep 1");
+        /*sleep(1);*/
 
 
       }
