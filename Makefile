@@ -85,7 +85,7 @@ debug2: $(SRCS)
 	$(CC) $(CFLAGS) $(SVIDFLAGS) -g -ggdb -o $(EXEC) $(OBJS) $(PKGFLAGS)
 	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
 
-	gdb --args ./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
+	gdb --args ./startup -n 3 -d 0 -h stratton.cs.dartmouth.edu
 	make clean
 	./cleansharedmem.sh
 
@@ -100,7 +100,7 @@ valgrind: $(OBJS)
 	$(CC) $(CFLAGS) $(SVIDFLAGS) -g -ggdb -o $(EXEC) $(OBJS) $(PKGFLAGS)
 	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
 
-	valgrind --trace-children=yes --tool=memcheck --leak-check=full ./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
+	valgrind --trace-children=yes --tool=memcheck --leak-check=full ./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu > valgrind.txt
 	make clean
 	./cleansharedmem.sh
 
@@ -118,8 +118,8 @@ clean:
 	rm -f ./prs
 	rm -f *.o
 	rm -f *.gch
-	rm -f core.*
-	rm -f vgcore.*
+	#rm -f core.*
+	#rm -f vgcore.*
 	rm -f .nfs*
 	rm -f graphics
 	rm -f startup

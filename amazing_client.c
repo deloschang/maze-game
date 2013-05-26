@@ -75,6 +75,7 @@ int main(int argc,char* argv[]){
             printf("failed to initialize semaphore\n");
             exit(1);
         }
+
         update_graphics();
 
         gtk_init(&argc, &argv);
@@ -183,7 +184,7 @@ int main(int argc,char* argv[]){
         printf("semaphore p failed\n");
         exit(1);
     }
-    sleep(rand() % 2);
+    /*sleep(rand() % 2);*/
     update_shared_map(NULL,init_pos);
 
     if (!semaphore_v(sem_id)){
@@ -192,15 +193,15 @@ int main(int argc,char* argv[]){
     } 
 
     printf("%d\n",avatar_id);
-    if (avatar_id==0){
-        //system("sleep 1");
-        //print_converted_map();
-        //print_shared_map();
-        //printf("hi\n");
-        //return 1;
-    }else{
-        system("sleep 1");
-    }
+    /*if (avatar_id==0){*/
+        /*//system("sleep 1");*/
+        /*//print_converted_map();*/
+        /*//print_shared_map();*/
+        /*//printf("hi\n");*/
+        /*//return 1;*/
+    /*}else{*/
+        /*system("sleep 1");*/
+    /*}*/
 
     //FOR GRAPHICS
     //if (avatar_id==0){
@@ -263,7 +264,13 @@ int main(int argc,char* argv[]){
 
     while (condition && test_counter < 50){
 
+        printf(" while loop for %d \n", avatar_id);
+
+        printf("\n A ***** \n");
         if (turn_num==avatar_id){
+
+          printf("\n %d 1 a ***** \n", avatar_id);
+
             if (mat!=NULL){
                 //free(mat);	
             }
@@ -481,15 +488,19 @@ int main(int argc,char* argv[]){
                 //printf("goal is (%d,%d)\n",goal->xPos,goal->yPos);
 
 
+                printf("\n 1 ***** \n");
 
-            }else{
+            } else{
                 printf("Maze Solved!!\n");
             }
 
+            printf("\n 2 ***** \n");
             if (!semaphore_v(sem_id)){
                 printf("semv failed\n");
                 exit(1);
             }
+            sleep(1);
+            printf("\n 3 ***** \n");
 
         }else{
             //system("sleep 1")
@@ -499,7 +510,9 @@ int main(int argc,char* argv[]){
             //exit(1);
             //}
 
-            sleep(2);
+          printf("\n B ***** \n");
+            sleep(1);
+          printf("\n C ***** \n");
 
             if (recv(sockfd,recvline,sizeof(AM_MESSAGE),0)==0){
                 printf("%d Couldnt receive message from the server\n",
@@ -507,9 +520,12 @@ int main(int argc,char* argv[]){
                 return 1;
 
             }
+            printf("\n D ***** \n");
+            printf("\n %d RECEIVED MESSAGE ***** \n", ntohl(recvline->message_type));
 
             if (ntohl(recvline->message_type)==AM_AVATAR_TURN){
                 turn_num=ntohl(recvline->msg.avatar_turn.TurnId);
+                printf("\n Avatar ID %d Turnnum %d ***** \n", avatar_id, turn_num);
             }
 
             if (ntohl(recvline->message_type)==AM_MAZE_SOLVED ||
@@ -538,15 +554,23 @@ int main(int argc,char* argv[]){
         // printf("semaphore v failed\n");
         // exit(1);
         //}
-        sleep(1);
+        printf("\n 4 ***** \n");
 
+        // troublemaker
+        sleep(2);
+        printf("\n 5 ***** \n");
+
+        printf("After sleep \n");
 
 
         test_counter++;
+        printf("\n 6 ***** \n");
         //system("sleep 1");
 
 
-        }
+      }
+        
+
         if (avatar_id==0){
             sleep(2 * nAvatars);
             del_semvalue(sem_id);
@@ -868,17 +892,18 @@ int main(int argc,char* argv[]){
 
         printf("\n 2 ***** \n");
 
-        /*for (int i = 0; i < DIM; i++){*/
-          /*for (int j = 0; j < DIM; j++){*/
-            /*data[i][j] = '\0';*/
-          /*}*/
-        /*}*/
+        for (int i = 0; i < DIM; i++){
+          for (int j = 0; j < DIM; j++){
+            data2[i][j] = '\0';
+          }
+        }
 
         for (int i = 0; i < graphics_map->row; i++){
           for (int j = 0; j < graphics_map->column; j++){
             /*data->matrix[i][j] = graphics_map->matrix[i][j];*/
-            data2[i][j] = graphics_map->matrix[i][j];
             /*printf("%c ", data->matrix[i][j]);*/
+
+            data2[i][j] = graphics_map->matrix[i][j];
             printf("%c ", data2[i][j]);
           }
           printf("\n");
@@ -888,5 +913,3 @@ int main(int argc,char* argv[]){
 
         free(graphics_map);
     }
-
-
