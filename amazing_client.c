@@ -290,9 +290,10 @@ int main(int argc,char* argv[]){
                 path[l]=-5;
             }
             goal=get_goal();
-            //goal=malloc(sizeof(XYPOS));
-            //goal->xPos=2;
-            //goal->yPos=2;
+
+            /*goal=malloc(sizeof(XYPOS));*/
+            /*goal->xPos=2;*/
+            /*goal->yPos=2;*/
 
             printf("goal for avatar  %d is (%d,%d)\n",avatar_id,
                     goal->xPos*2,goal->yPos*2);

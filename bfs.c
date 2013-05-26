@@ -59,56 +59,56 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
       order[r2]=temp;
     }
 
-      for (int i=0;i<4;i++){
-        // printf("order[%d] %d\n",k,order[k]);
-        //}
-        //shuffle(&order);
+    for (int i=0;i<4;i++){
+      // printf("order[%d] %d\n",k,order[k]);
+      //}
+      //shuffle(&order);
 
-        if (order[i]==0){
-          adj_x=v->x-2;
-          adj_y=v->y;
-          wall_x=v->x-1;
-          wall_y=v->y;
-        }else if (order[i]==1){
-          adj_x=v->x;
-          adj_y=v->y-2;
-          wall_x=v->x;
-          wall_y=v->y-1;
-        }else if (order[i]==2){
-          adj_x=v->x;
-          adj_y=v->y+2;
-          wall_x=v->x;
-          wall_y=v->y+1;
-        }else if (order[i]==3){
-          adj_x=v->x+2;
-          adj_y=v->y;
-          wall_x=v->x+1;
-          wall_y=v->y;
-        }
-      //printf("checking coordinates (%d,%d)\n",adj_x,adj_y);
-      if (adj_x>=0 && adj_y>=0 && wall_x>=0 && wall_y>=0 &&
-          adj_x<mat->column && wall_x<mat->column && adj_y<mat->row &&
-          wall_y<mat->row){
-        if (mat->matrix[wall_y][wall_x]!='1' && 
-            mat->matrix[wall_y][wall_x]!='_'){
-          if (contains(container,adj_x,adj_y)==0){
-            //printf("checked\n");
-            cell* g=init_cell(adj_x,adj_y,v->dist+1,0,v);
-            cell* con_g=init_cell(adj_x,adj_y,v->dist+1,0,v);
-            enqueue(container,con_g);
-            enqueue(q,g);
-          }else{
-            //printf("already visited\n");
-          }
-
-        }else{
-          //printf("wall\n");
-        }
-      }else{
-        //printf("out of bounds\n");
+      if (order[i]==0){
+        adj_x=v->x-2;
+        adj_y=v->y;
+        wall_x=v->x-1;
+        wall_y=v->y;
+      }else if (order[i]==1){
+        adj_x=v->x;
+        adj_y=v->y-2;
+        wall_x=v->x;
+        wall_y=v->y-1;
+      }else if (order[i]==2){
+        adj_x=v->x;
+        adj_y=v->y+2;
+        wall_x=v->x;
+        wall_y=v->y+1;
+      }else if (order[i]==3){
+        adj_x=v->x+2;
+        adj_y=v->y;
+        wall_x=v->x+1;
+        wall_y=v->y;
       }
+    //printf("checking coordinates (%d,%d)\n",adj_x,adj_y);
+    if (adj_x>=0 && adj_y>=0 && wall_x>=0 && wall_y>=0 &&
+        adj_x<mat->column && wall_x<mat->column && adj_y<mat->row &&
+        wall_y<mat->row){
+      if (mat->matrix[wall_y][wall_x]!='1' && 
+          mat->matrix[wall_y][wall_x]!='_'){
+        if (contains(container,adj_x,adj_y)==0){
+          //printf("checked\n");
+          cell* g=init_cell(adj_x,adj_y,v->dist+1,0,v);
+          cell* con_g=init_cell(adj_x,adj_y,v->dist+1,0,v);
+          enqueue(container,con_g);
+          enqueue(q,g);
+        }else{
+          //printf("already visited\n");
+        }
 
-    }     
+      }else{
+        //printf("wall\n");
+      }
+    }else{
+      //printf("out of bounds\n");
+    }
+
+  }     
   }
 
   if (!is_found){
