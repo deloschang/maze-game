@@ -40,6 +40,7 @@ $(EXEC): $(OBJS)
 	./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
 
 	make clean
+	./cleansharedmem.sh
 
 $(OBJS): $(SRCS) 
 	$(CC) $(CFLAGS) $(SVIDFLAGS) -c $(SRCS) $(PKGFLAGS)
@@ -125,8 +126,4 @@ clean:
 	rm -f algo
 	rm -f amazing_client
 
-cleanlog:
-	rm -f *.log
-
-
-
+clean

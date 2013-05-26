@@ -11,6 +11,7 @@
 #include "graphics.h"
 
   // Global map struct should go here.
+  /*matrix* data = malloc(sizeof(matrix*));*/
   matrix* data;
 
   // Call render_maze() once and it will rerender the global
@@ -225,7 +226,7 @@ void render_maze(){
 
   // Clean up
   g_source_remove(timer);
-  free(data);
+  /*free(data);*/
 }
 
 // Simulates the moving avatars

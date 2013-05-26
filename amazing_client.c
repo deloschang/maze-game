@@ -56,7 +56,10 @@
 
 void* start_graphics(void *ptr){
     render_maze();
+    return NULL;
 }
+
+extern matrix* data;
 
 int main(int argc,char* argv[]){
     //printf("amazing client started\n");
