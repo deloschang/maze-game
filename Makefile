@@ -39,7 +39,7 @@ $(EXEC): $(OBJS)
 	# test run
 	./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
 
-	make clean
+	#make clean
 	./cleansharedmem.sh
 
 $(OBJS): $(SRCS) 
@@ -85,7 +85,7 @@ debug2: $(SRCS)
 	$(CC) $(CFLAGS) $(SVIDFLAGS) -g -ggdb -o $(EXEC) $(OBJS) $(PKGFLAGS)
 	$(CC) $(CFLAGS) -g -ggdb -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
 
-	gdb --args ./startup -n 3 -d 0 -h stratton.cs.dartmouth.edu
+	gdb --args ./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
 	make clean
 	./cleansharedmem.sh
 
