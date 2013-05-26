@@ -11,20 +11,21 @@
 #include "graphics.h"
 
   // Global map struct should go here.
-matrix* data;
+  matrix* data;
+
   // Call render_maze() once and it will rerender the global
   // map struct (data) every 1 sec.
-  static char Array[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {
-    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
-    { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
-    { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,
-    { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
-    { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,
-    { 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'E' } ,
-    { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
-    { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-  };
+  /*static char Array[LEVEL_0_ROWS][LEVEL_0_COLUMNS] = {*/
+    /*{ 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,*/
+    /*{ '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,*/
+    /*{ 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,*/
+    /*{ '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,*/
+    /*{ 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,*/
+    /*{ '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,*/
+    /*{ 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'E' } ,*/
+    /*{ '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,*/
+    /*{ 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,*/
+  /*};*/
   // Shared map (struct) between all the avatars
   GtkWidget *main_window,
             *vbox,
@@ -75,7 +76,7 @@ matrix* data;
 
 
 // Simulation Flag
-int flag = 0; // used to simulate avatar moving in sep thread
+/*int flag = 0; // used to simulate avatar moving in sep thread*/
 
 /**
 * Takes the 2D Array and prints it onto the terminal
@@ -150,7 +151,10 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
         // Draw the avatar
         // Temporary rectangle / change later
 
-        cairo_rectangle (cr, x, y, convert_step_x, convert_step_y);
+        cairo_rectangle (cr, x + (convert_step_x / 4), 
+            y + (convert_step_y / 4), 
+            convert_step_x - (convert_step_x / 3), 
+            convert_step_y - (convert_step_y / 3));
         cairo_fill (cr);
 
         x += convert_step_x;

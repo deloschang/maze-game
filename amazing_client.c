@@ -847,11 +847,11 @@ int main(int argc,char* argv[]){
 
         for (int i = 0; i < data->row; i++){
             for (int j = 0; j < data->column; j++){
-                data->matrix[i][j] = graphics_map->matrix[i][j];
+              data->matrix[i][j] = graphics_map->matrix[i][j];
+              printf("%c ", data->matrix[i][j]);
             }
+            printf("\n");
         }
-    
-
 
     }
 
