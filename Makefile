@@ -42,7 +42,7 @@ $(EXEC): $(OBJS)
 
 	# test run
 	#./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
-	./startup -n 2 -d 0 -h kancamagus.cs.dartmouth.edu
+	./startup -n 3 -d 3 -h kancamagus.cs.dartmouth.edu
 
 	make clean
 	./cleansharedmem.sh
