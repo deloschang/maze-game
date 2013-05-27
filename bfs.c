@@ -1,6 +1,9 @@
 //file: bfs.c
 //
-//Breadth first search implementation
+//Breadth first search implementation with some modifications
+//Modifications include choosing random direction for the search
+//BFS is implemented using queue data structure which contains
+//cell data structures. Cell data structure represents a grid on the maze
 
 #include "amazing.h"
 #include <stdlib.h>
@@ -9,6 +12,9 @@
 #include "header.h"
 #include "amazing_client.h"
 
+
+//function that finds and constructs a path (stores it into path array) from
+//start to goal positions
 void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
      queue* container=malloc(sizeof(queue));
      queue* q=malloc(sizeof(queue));
@@ -18,31 +24,32 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
      cell* con_first=init_cell(start->xPos*2,start->yPos*2,0,0,NULL);
      q->head=first;
      container->head=con_first;
-     
+
+     queue* deq_list=malloc(sizeof(queue));
+     deq_list->head=NULL;     
+
      int adj_x;
      int adj_y;
      int wall_x;
      int wall_y;
-     int distance=0;
      cell* v;
      int is_found=0;
      while (q->head!=NULL){
 	v=dequeue(q);
-        //distance+=1;
-	//printf("exploring (%d,%d)\n",v->x,v->y);
+        enqueue(deq_list,v);
+
+	//found a goal
         if (v->x==goal->xPos*2 && v->y==goal->yPos*2){
-              //cell* g=init_cell(adj_x,adj_y,0,0,v);
-              //int* path=construct_path(v);
               construct_path(v,path);
 	      is_found=1;
-              //free_queue(container);
-	      //free_queue(q);
-	      //free(q);
-              //free(container);
-              //return path;
+              free_queue(container);
+	      //free_queue_advanced(q);
+	      //free_queue_advanced(deq_list);
+	      return;   
         }
 	     
-	//for (int i=0;i<4;i++){
+	//function to mix the order of
+	//direct exploration
 		
 	int order[4]={0,1,2,3};
 	int temp;
@@ -54,11 +61,12 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
 	   order[r2]=temp;
 	}
 
+	//exploring each possible direction
 	for (int i=0;i<4;i++){
-	    // printf("order[%d] %d\n",k,order[k]);
-	  //}
-	  //shuffle(&order);
-
+	
+	  //adj_x,adj_y signify next entry position
+	  //while wall_x,wall_y illustrate walls associated with the
+	  //transition between current and next entry
 	  if (order[i]==0){
 	     adj_x=v->x-2;
 	     adj_y=v->y;
@@ -80,98 +88,75 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
 	     wall_x=v->x+1;
 	     wall_y=v->y;
 	  }
-	  //printf("checking coordinates (%d,%d)\n",adj_x,adj_y);
+	  //checking for boundary cases
 	  if (adj_x>=0 && adj_y>=0 && wall_x>=0 && wall_y>=0 &&
 		adj_x<mat->column && wall_x<mat->column && adj_y<mat->row &&
 		wall_y<mat->row){
 	      if (mat->matrix[wall_y][wall_x]!='1' && 
-				mat->matrix[wall_y][wall_x]!='_'){
-	         if (contains(container,adj_x,adj_y)==0){
-		     //printf("checked\n");
+				mat->matrix[wall_y][wall_x]!='_'){//wall
+	         if (contains(container,adj_x,adj_y)==0){//if cell wasnt 
+							//explored yet
 	             cell* g=init_cell(adj_x,adj_y,v->dist+1,0,v);
-                     cell* con_g=init_cell(adj_x,adj_y,v->dist+1,0,v);
+                     cell* con_g=init_cell(adj_x,adj_y,v->dist+1,0,NULL);
 		     enqueue(container,con_g);
 		     enqueue(q,g);
-	          }else{
-			//printf("already visited\n");
-		  }
+		     v->is_visited++;//updating for freeing purposes
+	          }
 		
-	      }else{
-		  //printf("wall\n");
 	      }
-	   }else{
-		//printf("out of bounds\n");
 	   }
 
-	}     
+       }     
      }
+	
+     //this should never happen since this is a perfect maze
      if (!is_found){
 	printf("path not found, shouldnt happend\n");
-	//path[0]=rand() % 4;
-	path[0]=8;
 	exit(3);
      }
-     //printf("freeing\n");
-     //free_queue(container);
-     //free_queue(q);
-     //free(q);
-     //free(container);
-     //return NULL;
 
 
 }
 
-
+//function that constructs a path given a cell
+//cell c has a reference to its parent so its easy to backtrack the
+//original path and put it into int array temp_path
 void construct_path(cell* c,int temp_path[]){
     int distance=c->dist;
-    printf("Distance %d\n",distance);
-    //int temp_path[distance];
-    //int* path=malloc((distance)*sizeof(int));
-    //int* path;
-    //memset(path,0,distance*sizeof(int));
     int counter=distance-1;
-    //int counter=0;
     cell* sentinel=c;
+
     if (sentinel->parent==NULL){
 	temp_path[0]=8;
-	printf("ASSIGNING 8 to PATH *******************\n");
-	//path=&temp_path[0];
-	//return path;
     }else{
+	//looping through all of the parents and constructing the path
+	//as we go along (NOTE the path is constructed in a reverse order
+	//and we will need to reverse it later)
        while (sentinel->parent!=NULL){
-       //while (counter>=0){
 	  cell* p=sentinel->parent;
-	  //printf("exploring parent  (%d,%d)\n",p->x,p->y);
 	   if (sentinel->y==p->y && sentinel->x+2==p->x){//west
 	       temp_path[counter]=0;
 	       counter--;
-	   }else
-           if (sentinel->y==p->y && sentinel->x-2==p->x){//east
+	   }else if (sentinel->y==p->y && sentinel->x-2==p->x){//east
                temp_path[counter]=3;
                counter--;
-           }else
-           if (sentinel->x==p->x && sentinel->y+2==p->y){//north
+           }else  if (sentinel->x==p->x && sentinel->y+2==p->y){//north
                temp_path[counter]=1;
                counter--;
-           }else
-           if (sentinel->x==p->x && sentinel->y-2==p->y){//south
+           }else if (sentinel->x==p->x && sentinel->y-2==p->y){//south
                temp_path[counter]=2;
                counter--;
            }
-           //printf("path coordiantes (%d,%d)\n",sentinel->x,sentinel->y);
-	   //printf("path move: %d\n",temp_path[counter+1]);
 	   sentinel=sentinel->parent;
          }
-         //printf("path coordinates (%d,%d)\n",sentinel->x,sentinel->y);
-	 //printf("path move: %d\n",path[counter+1]);
-         //printf("returning path\n");
-	 
-	 //path=&temp_path[0];
-	 print_path(temp_path,distance);
-         //return path;
-     }
+     }         
+	 //DONE!
+	 //path is stored into the array
+	 //print_path(temp_path,distance-1);
+  
 }
 
+//enqueues the cell into a queue as a last entry (FIFO structure)
 void enqueue(queue* q, cell* c){
     cell* sentinel=q->head;
     if (sentinel==NULL){
@@ -183,9 +168,10 @@ void enqueue(queue* q, cell* c){
        sentinel->next=c;
        c->prev=sentinel;
     }
-    //printf("enqued\n");
 }
 
+
+//dequeue the queue (first cell in the queue removed)
 cell* dequeue(queue* q){
    cell* for_return=q->head;
    if (for_return->next==NULL){
@@ -200,6 +186,7 @@ cell* dequeue(queue* q){
    return for_return;
 }
 
+//function to check whether given coordinates have already been explored
 int contains(queue* q,int xPos,int yPos){
      cell* sentinel=q->head;
      
@@ -217,7 +204,7 @@ int contains(queue* q,int xPos,int yPos){
 
 }
 
-
+//function to free the queue data structure
 void free_queue(queue* q){
     cell* c=q->head;
 
@@ -226,9 +213,11 @@ void free_queue(queue* q){
 	free(c->prev);
     }
     free(c);
+    free(q);
 
 }
 
+//cell constructor
 cell* init_cell(int xpos,int ypos,int d,int is_marked,cell* p){
      cell* c=malloc(sizeof(cell));
      MALLOC_CHECK(c);
@@ -242,13 +231,11 @@ cell* init_cell(int xpos,int ypos,int d,int is_marked,cell* p){
      return c;
 }
 
-//void print_path(matrix* mat,XYPOS* s,XYPOS* e){
+//function to print the path (for debugginf purposes)
 void print_path(int path[],int length){
-    //int *path=find_path(mat,s,e);
-    //int* sentinel=path;
     printf("Path: ");
     fflush(stdout);
-    //for (int i=0;i<(sizeof(path)/sizeof(int));i++){
+  
     for (int i=0;i<length;i++){
 	printf("%d;",path[i]);
     }
@@ -256,14 +243,62 @@ void print_path(int path[],int length){
 
 }
 
-void shuffle(int* array){
-    int temp;
-    for (int i=0;i<100;i++){
-	int r1=rand() % 3;
-	int r2=rand() % 3;
-	temp=array[r1];
-	array[r1]=array[r2];
-	array[r2]=temp;
+void free_queue_advanced(queue* q){
+    cell* c=q->head;
+    
+    cell* prev;
+   
+    if (c!=NULL){
+
+
+       while (c->next!=NULL){//sentinel in the horizontal level (->next, ->prev)
+
+	   cell* p_sent=c->parent; //sentinel in the parent layer (->parent)
+       
+	   while (p_sent!=NULL){
+	      p_sent->is_visited--;
+	      if (p_sent->is_visited==0){
+		   prev=p_sent;
+		   p_sent=p_sent->parent;
+		   free(prev);
+	      }else{
+		   p_sent=p_sent->parent;
+	      }
+	   }
+	   c->is_visited--;
+	   if (c->is_visited==0){
+		prev=c;
+		c=c->next;
+		free(prev);
+	   }else{
+		c=c->next;
+	   }
+        }
+
+       //freeing all of the data structures associates with the last
+       //cell as well
+       cell* p=c->parent;
+   
+       while (p!=NULL){
+	   p->is_visited--;
+           if (p->is_visited==0){
+	       prev=p;
+	       p=p->parent;
+	       free(p);
+	   }else{
+	       p=p->parent;
+	   }
+       }
+       c->is_visited--;
+       if (c->is_visited==0){
+           prev=c;
+           //c=c->next;
+           free(prev);
+       }
+
+
     }
+
+
 
 }
