@@ -261,10 +261,8 @@ int main(int argc,char* argv[]){
                     exit(1);
                 }
 
-                condition=0;//and set this variable to 0 so that maze
-                //solving algorithm would stop
 
-                //updating the map for the very last time
+                // Updating the map for the very last time
                 int x_list[AM_MAX_AVATAR];
                 int y_list[AM_MAX_AVATAR];
                 int count=0;
@@ -280,6 +278,9 @@ int main(int argc,char* argv[]){
                 }
                 update_shared_map(cur_pos,new_pos,x_list,y_list
                         ,count);
+
+                condition=0;//and set this variable to 0 so that maze
+                //solving algorithm would stop
 
             }
 
@@ -387,6 +388,7 @@ int main(int argc,char* argv[]){
                 system(log_file_msg);
 
                 turn_num=ntohl(recvline->msg.avatar_turn.TurnId);
+
             }else{
                 printf("Maze Solved!!\n");
             }
@@ -534,7 +536,10 @@ matrix* convert_map(){
 }
 
 
-//function that adds a wall to our shared map resource
+/**
+ * mark_as_wall
+ * function that adds a wall to our shared map resource
+ **/
 void mark_as_wall(XYPOS* wall){
     shared_map* sh_map=get_shared_map();
     sh_map->map[(wall->yPos)][(wall->xPos)]=1;
@@ -654,7 +659,10 @@ XYPOS* get_goal(XYPOS* start_pos){
 
 }
 
-//function that updates shared map resource with the new positions
+/**
+ * update_shared_map
+ * function that updates shared map resource with the new positions
+ **/
 void update_shared_map(XYPOS* old, XYPOS *new, int x_cords[],
         int y_cords[],int counter){
 
@@ -684,12 +692,15 @@ void update_shared_map(XYPOS* old, XYPOS *new, int x_cords[],
         sh_map->map[(new->yPos)*2][(new->xPos)*2]=7;//upating new postion
 
         //NOTE: we need to multiple by 2 because our representation of the
-        //map is doube the size of the original map
+        //map is double the size of the original map
     }
 
 }
 
-//function that retrieves shared map from the shared memory segment
+/**
+ * get_shared_map
+ * function that retrieves shared map from the shared memory segment
+ **/
 shared_map* get_shared_map(){
     void *shared_memory=(void*)0;
     shared_map *sh_map;
