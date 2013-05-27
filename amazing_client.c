@@ -54,7 +54,7 @@
 int main(int argc,char* argv[]){
     //extern matrix* data;
     //printf("amazing client started\n");
-
+    //extern matrix* data;
     int avatar_id=atoi(argv[1]);
 
     int sem_id;
@@ -65,6 +65,10 @@ int main(int argc,char* argv[]){
 	     printf("failed to initialize semaphore\n");
 	     exit(1);
 	}
+
+	//for graphics
+	//update_graphics();
+	//render_view();
     }else{
 	system("sleep 1");
 	sem_id=semget((key_t)1324,1,0666);
@@ -165,7 +169,8 @@ int main(int argc,char* argv[]){
 	exit(1);
     }
     sleep(rand() % 2);
-    update_shared_map(NULL,init_pos);
+    int empty_param[AM_MAX_AVATAR]={0,0,0};//value doesnt matter
+    update_shared_map(NULL,init_pos,empty_param,empty_param,0);
 
     if (!semaphore_v(sem_id)){
 	printf("semaphore v failed\n");
@@ -205,7 +210,7 @@ int main(int argc,char* argv[]){
     
     //testing bfs
     //
-    int path[100];
+    int path[500];
     int path_count=0;
     //condition=0;
     //if (avatar_id==0){
@@ -232,7 +237,7 @@ int main(int argc,char* argv[]){
 
 
 
-    while (condition && test_counter<15){
+    while (condition){ //&& test_counter<850){
 
 	if (turn_num==avatar_id){
 	   if (mat!=NULL){
@@ -245,15 +250,18 @@ int main(int argc,char* argv[]){
    	   }
 	   printf("avatar's turn: %d\n",avatar_id);
 	   matrix* mat=convert_map();
+	   //print_converted_map();
 	   //if (goal!=NULL){
 	       //free(goal);
 	   //}
 	   //printf("getting average %d\n",avatar_id);
 	   //goal=get_average();
-	   for (int l=0;l<100;l++){
+	   for (int l=0;l<500;l++){
 		path[l]=-5;
 	   }
-	   goal=get_goal();
+	   //printf("Entering get goal\n");
+	   goal=get_goal(cur_pos);
+	   //printf("got out of get goal\n");
 	   //goal=malloc(sizeof(XYPOS));
            //goal->xPos=2;
 	   //goal->yPos=2;
@@ -262,6 +270,7 @@ int main(int argc,char* argv[]){
 				goal->xPos*2,goal->yPos*2);
 	   
 	   find_path(mat,cur_pos,goal,path);
+	   printf("found path: %d \n", path[0]);
 	   path_count=0;
 	   //int next_move=find_move(cur_pos,goal,mat);
 	   //if (next_move==-1){
@@ -278,6 +287,7 @@ int main(int argc,char* argv[]){
 	      path_count++;
 	  
           }else{
+	       printf("ASSIGNIN 8 to path **@@@@@@@@@@@\n");
  	       next_move=8;
 	  }
 	   printf("Next move for avatar: %d is %d\n",avatar_id,next_move);
@@ -374,24 +384,56 @@ int main(int argc,char* argv[]){
 		  //  }else{
 			//printf("hi\n");
 			//fflush(stdout);
-			//print_path(path);
+			//print_path(path);i
 	       	    //path_count=0;
 		    //}
 		    //path_count=0;
 		    //printf("avatar %d ran into wall\n",avatar_id);
 	         }else {
 		    //if (next_move!=8){
-	                update_shared_map(cur_pos,new_pos);
+	               
+			XYPOS list[AM_MAX_AVATAR];
+			//XYPOS* list;
+			//list=recvline->msg.avatar_turn.Pos;
+			//XYPOS** ptr_list=malloc(AM_MAX_AVATAR*sizeof(XYPOS));
+			//XYPOS* ptr;
+			int x_cords[AM_MAX_AVATAR];
+			int y_cords[AM_MAX_AVATAR];
+			int counter=0;
+			for (int i=0;i<nAvatars;i++){
+			   //ptr=malloc(sizeof(XYPOS));
+			   //ptr->xPos=list[i].xPos;
+			   //ptr->yPos=list[i].yPos;
+			   //ptr_list[i]=ptr;
+			   if (i!=avatar_id){
+			       //ptr->xPos=ntohl(recvline->msg.
+				//		avatar_turn.Pos[i].xPos);
+			       //ptr->yPos=ntohl(recvline->msg.avatar_turn.
+				//			Pos[i].yPos);
+			       //ptr_list[counter]=ptr;
+			       x_cords[counter]=ntohl(recvline->msg.
+						avatar_turn.Pos[i].xPos);
+			       y_cords[counter]=ntohl(recvline->msg.
+						avatar_turn.Pos[i].yPos);
+			       counter++;
+			   }
+			}
+			update_shared_map(cur_pos,new_pos,x_cords,y_cords
+						,counter);
+			//free_pos_list(ptr_list,counter);
+
+			
 		    //}
                     //free(cur_pos);
 		    //cur_pos=new_pos;
 		 }
 		 cur_pos->xPos=new_pos->xPos;
 		 cur_pos->yPos=new_pos->yPos;
-	         
+	         //update_graphics();
+
 		 if (cur_pos->xPos==goal->xPos && cur_pos->yPos==goal->yPos){
 		     path_count=-1;
-		     next_move=8;
+		     //next_move=8;
 		 }
 		     
 		 //free(new_pos);
@@ -399,9 +441,9 @@ int main(int argc,char* argv[]){
 		 //FOR GRAPHICS
 		 //free(data);
 		 //data=convert_map();
-		 char av_id_str[50];
-		 BZERO(av_id_str,50);
-		 snprintf(av_id_str,50,"%d",avatar_id);
+		 char next_move_str[50];
+		 BZERO(next_move_str,50);
+		 snprintf(next_move_str,50,"%d",next_move);
 	         char coord[50];
 	         BZERO(coord,50);
 	         snprintf(coord,50,"%d",cur_pos->xPos);
@@ -410,8 +452,8 @@ int main(int argc,char* argv[]){
 
 		 strncpy(log_file_msg,"echo ' ",AM_MAX_MESSAGE);
 		 strncat(log_file_msg,"Avatars move: ",AM_MAX_MESSAGE);
-		 strncat(log_file_msg,av_id_str,AM_MAX_MESSAGE);
-		 strncat(log_file_msg," >> ",AM_MAX_MESSAGE);
+		 strncat(log_file_msg,next_move_str,AM_MAX_MESSAGE);
+		 strncat(log_file_msg,"' >> ",AM_MAX_MESSAGE);
 		 strncat(log_file_msg,log_file,AM_MAX_MESSAGE);
 		 system(log_file_msg);
 
@@ -457,10 +499,10 @@ int main(int argc,char* argv[]){
 	
             //if (!semaphore_p(sem_id)){
               //  printf("semaphore_p failed\n");
-                //exit(1);
+               // exit(1);
 	    //}
 
-	    sleep(2);
+	    //sleep(1);
 
             if (recv(sockfd,recvline,sizeof(AM_MESSAGE),0)==0){
                 printf("%d Couldnt receive message from the server\n",
@@ -476,6 +518,7 @@ int main(int argc,char* argv[]){
 	    if (ntohl(recvline->message_type)==AM_MAZE_SOLVED ||
 	        ntohl(recvline->message_type)==AM_SERVER_TIMEOUT ||
 		ntohl(recvline->message_type)==AM_TOO_MANY_MOVES){
+		printf("message solved received in other process too\n");
 		condition=0;
 	    }
 	    //system("sleep 1");
@@ -484,6 +527,10 @@ int main(int argc,char* argv[]){
 	    //    turn_num=0;
 	    //}
 	
+           // if (!semaphore_v(sem_id)){
+             //   printf("semv failed\n");
+               // exit(1);
+            //}
 
 
 
@@ -502,7 +549,7 @@ int main(int argc,char* argv[]){
 	  // printf("semaphore v failed\n");
 	  // exit(1);
 	//}
-        sleep(1);
+        //sleep(1);
 	    
 
 
@@ -512,7 +559,7 @@ int main(int argc,char* argv[]){
 
     }
     if (avatar_id==0){
-        sleep(2);
+        sleep(nAvatars);
         del_semvalue(sem_id);
     }
 
@@ -564,9 +611,9 @@ void print_converted_map(){
     matrix* mat=convert_map();
     for (int i=0;i<mat->row;i++){
 	for (int j=0;j<mat->column;j++){
-	     printf("%c",mat->matrix[i][j]);
+	     printf("%c ",mat->matrix[i][j]);
 	}
-	printf("\n");
+	printf("\n\n");
 
     }
     free(mat);
@@ -579,39 +626,40 @@ matrix* convert_map(){
     MALLOC_CHECK(mat);
     mat->row=sh_map->row;
     mat->column=sh_map->col;
-    char child_mat[sh_map->row][sh_map->col];
+    //char child_mat[sh_map->row][sh_map->col];
     for (int i=0;i<sh_map->row;i++){
-	BZERO(child_mat[i],sh_map->col);
-        BZERO(mat->matrix[i],sh_map->col);
+	//BZERO(child_mat[i],sh_map->col);
+        //BZERO(mat->matrix[i],sh_map->col);
 	for (int j=0;j<sh_map->col;j++){
+	    mat->matrix[i][j]='\0';
 	    if (i % 2==0 && j % 2==0){
 		if (sh_map->map[i][j]==7){
-		     child_mat[i][j]='A';
+		     //child_mat[i][j]='A';
 		     mat->matrix[i][j]='A';
 		//}else if (sh_map->map[i][j]==9){
 		  //   mat->matrix[i][j]='V';
 		}else{
-		     child_mat[i][j]='E';
+		     //child_mat[i][j]='E';
 		     mat->matrix[i][j]='E';
 		}
 	    }else if (i % 2==0 && j % 2!=0){
 		if (sh_map->map[i][j]==1){
-		     child_mat[i][j]='1';
+		     //child_mat[i][j]='1';
 		     mat->matrix[i][j]='1';
 		}else{
-		     child_mat[i][j]='0';
+		     //child_mat[i][j]='0';
 		     mat->matrix[i][j]='0';
 		}
 	    }else if (i % 2!=0 && j % 2==0){
 		if (sh_map->map[i][j]==1){
-		     child_mat[i][j]='_';
+		     //child_mat[i][j]='_';
 		     mat->matrix[i][j]='_';
 		}else{
-		     child_mat[i][j]='0';
+		     //child_mat[i][j]='0';
 		     mat->matrix[i][j]='0';
 		}
 	    }else if (i % 2!=0 && j % 2!=0){
-		child_mat[i][j]='Z';
+		//child_mat[i][j]='Z';
 		mat->matrix[i][j]='Z';
 	    }	     
 
@@ -630,67 +678,136 @@ void mark_as_wall(XYPOS* wall){
 }
 
 
-XYPOS* get_goal(){
+XYPOS* get_goal(XYPOS* start_pos){
      printf("Calculating goal\n");
      //shared_map* sh_map=get_shared_map();
      matrix* mat=convert_map();
-     int path[100];
+     int path[500];
      XYPOS* avatar_list[10];
-     int index;
+     int index=0;
      for (int i=0;i<mat->row;i++){
 	for (int j=0;j<mat->column;j++){
-	      if (mat->matrix[i][j]=='A'){
+	      if (mat->matrix[i][j]=='A'){// && i!=2*start_pos->yPos &&
+					 //j!=2*start_pos->xPos){
 		printf("Found avatar %d\n",index);
 		XYPOS* av=malloc(sizeof(XYPOS));
+		MALLOC_CHECK(av);
+		//printf("checked\n");
 		av->xPos=j/2;
+		//printf("assignedx\n");
 		av->yPos=i/2;
+		//printf("assignedy\n");
 	        avatar_list[index]=av;
+		//printf("assigned to list\n");
 		index++;
+		//printf("incremented index\n");
+	      }
+	      if (mat->matrix[i][j]=='A'){
+		printf("FOUND 'A' at %d %d\n",j,i);
 	      }
 	}
      }
+     printf("out of the loop\n");
+//------------
+
+     //XYPOS* test=malloc(sizeof(XYPOS));
+     //test->xPos=10;
+     //test->yPos=10;
+     //return test;
+
+//--------------------
+     //printf("index %d\n",index);
+     int max_dist=-10000;
      int min_dist=10000;
-     int min_path[100];
-     int min_avatar1;
+     int min_path[500];
+     int min_avatar;
+     int max_avatar;
+
+     int avg_x=0;
+     int avg_y=0;
      //int min_avatar2;
      int counter=0;
      for (int i=0;i<index;i++){
-	for (int j=i+1;j<index;j++){
-	     for (int k=0;k<100;k++){
+	//printf("loop %d\n",i);
+	//for (int j=i+1;j<index;j++){
+	     for (int k=0;k<500;k++){
 		path[k]=-5;
 	     }
-	     printf("looking for a path between (%d,%d) and (%d,%d)\n",
-		avatar_list[i]->xPos,avatar_list[i]->yPos,
-		avatar_list[j]->xPos,avatar_list[j]->yPos);
-	     find_path(mat,avatar_list[i],avatar_list[j],path);
-	     counter=0;
-	     while (path[counter]!=-5 && counter<100){
-		counter++;
-	     }
-	     if (counter<min_dist && counter!=0){
-		min_dist=counter;
-		min_avatar1=i;
-		//min_avatar2=j;
-		for (int k=0;k<100;k++){
-		    min_path[k]=-5;
-		}
-		for (int k=0;k<counter;k++){
-		    min_path[k]=path[k];
-		}
-	     }
-	}
-     }
+	     if (avatar_list[i]->yPos != start_pos->yPos ||
+		avatar_list[i]->xPos != start_pos->xPos){
+	          printf("looking for a path between (%d,%d) and (%d,%d)\n",
+		  //avatar_list[i]->xPos,avatar_list[i]->yPos,
+		  start_pos->xPos,start_pos->yPos,
+		  avatar_list[i]->xPos,avatar_list[i]->yPos);
+		  avg_x+=avatar_list[i]->xPos;
+		  avg_y+=avatar_list[i]->yPos;
+	          find_path(mat,start_pos,avatar_list[i],path);
+	          counter=0;
+	          while (path[counter]!=-5 && counter<500){
+		     counter++;
+	          }
+	          if (counter<min_dist){// && counter>0){
+		     min_dist=counter;
+		     min_avatar=i;
+		     //min_avatar2=j;
+		     for (int k=0;k<500;k++){
+		        min_path[k]=-5;
+		     }
+		     for (int k=0;k<counter;k++){
+		        min_path[k]=path[k];
+		     }
+	         }
 
-     XYPOS* start=avatar_list[min_avatar1];
+		if (counter>max_dist){
+		     max_dist=counter;
+		     max_avatar=i;
+		}
+	    }
+	//}
+     }
+     avg_x=avg_x/index;
+     avg_y=avg_y/index;
+
+     //XYPOS* start=avatar_list[min_avatar1];
      XYPOS* goal=malloc(sizeof(XYPOS));
-     goal->xPos=start->xPos;
-     goal->yPos=start->yPos;
-     if (counter==1){
+     goal->xPos=start_pos->xPos;
+     goal->yPos=start_pos->yPos;
+
+     //int rand_cond=rand() % 2;
+     if (max_dist<7){ //  || (min_dist<4 && max_dist<10)){
+//	if  (rand_cond==0){
+	goal->xPos=avatar_list[index/2]->xPos;
+	goal->yPos=avatar_list[index/2]->yPos;
+	return goal;
+     }
+	
+    
+//	}else{
+//	  goal->xPos=avatar_list[min_avatar]->xPos;
+//	  goal->yPos=avatar_list[min_avatar]->yPos;
+//	  return goal;
+//	}
+  //  }
+
+    // if (min_dist==1 && counter>1 && index>0){
+//	goal->xPos=avatar_list[index-1]->xPos;
+//	goal->xPos=avatar_list[index-1]->yPos;
+
+    // }
+     //if (min_dist==1){
+	// && min_path[0]!=8)
+	
 	//goal->xPos=start->xPos;
 	//goal->yPos=start->yPos;
-	return goal;
-     }else{
-        for (int i=0;i<counter/2;i++){
+//	printf("returning original goal\n");
+//	return goal;
+  //  }else{
+	//printf("computing goal inside get_goal\n");
+	int size=min_dist/2+1;
+	if (size==0){
+	    size++;
+	}
+        for (int i=0;i<size;i++){
 	    if (min_path[i]==0){
 		goal->xPos-=1;	
 	    }else if (min_path[i]==1){
@@ -701,7 +818,7 @@ XYPOS* get_goal(){
 		goal->xPos+=1;
 	    }
 	}
-     }
+    // }
      for (int i=0;i<index;i++){
 	free(avatar_list[i]);
      }
@@ -741,18 +858,32 @@ XYPOS* get_average(){
 }
 
 
-void update_shared_map(XYPOS* old, XYPOS *new){
+void update_shared_map(XYPOS* old, XYPOS *new, int x_cords[],
+						int y_cords[],int counter){
      if (old!=NULL){
        //printf("Update Map:\n"); 
        //printf("%d,%d\n",old->xPos,old->yPos);
        //printf("%d,%d\n",new->xPos,new->yPos);
      }
-     if (old==NULL){
+     if (old==NULL || counter==0){
          shared_map* sh_map=get_shared_map();
          sh_map->map[(new->yPos)*2][(new->xPos)*2]=7;
      }else{
 	 shared_map* sh_map=get_shared_map();
-	 sh_map->map[(old->yPos)*2][(old->xPos)*2]=9;
+	 int is_avatar_there=0;
+	 for (int i=0;i<counter;i++){
+	     if (old->xPos==x_cords[i] &&
+		old->yPos==y_cords[i]){
+		is_avatar_there=1;
+	     }
+	 }
+	 if (is_avatar_there){
+             sh_map->map[(old->yPos)*2][(old->xPos)*2]=7;
+	 }else{
+	     sh_map->map[old->yPos*2][old->xPos*2]=9;
+	 }
+
+	 //}
 	 sh_map->map[(new->yPos)*2][(new->xPos)*2]=7;
      }
 
@@ -783,6 +914,17 @@ shared_map* get_shared_map(){
     return sh_map;
 }
 
+//void update_graphics(){
+  //   matrix* mat=convert_map();
+    // matrix* data;
+     //for (int i=0;i<mat->row;i++){
+//	for (int j=0;j<mat->column;j++){
+//	    data->matrix[i][j]=mat->matrix[i][j];
+//	}
+  //   }
+
+//}
+
 void free_shared_memory(){
     void *shared_memory=(void*)0;
     //shared_map *sh_map;
@@ -807,6 +949,14 @@ void free_shared_memory(){
 	printf("shmctl failed\n");
 	exit(1);
     }
+
+}
+
+void free_pos_list(XYPOS** list,int counter){
+    for (int i=0;i<counter;i++){
+	free(list[i]);
+    }
+    free(list);
 
 }
 

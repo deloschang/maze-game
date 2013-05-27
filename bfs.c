@@ -107,7 +107,9 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
      }
      if (!is_found){
 	printf("path not found, shouldnt happend\n");
+	//path[0]=rand() % 4;
 	path[0]=8;
+	exit(3);
      }
      //printf("freeing\n");
      //free_queue(container);
@@ -132,6 +134,7 @@ void construct_path(cell* c,int temp_path[]){
     cell* sentinel=c;
     if (sentinel->parent==NULL){
 	temp_path[0]=8;
+	printf("ASSIGNING 8 to PATH *******************\n");
 	//path=&temp_path[0];
 	//return path;
     }else{
@@ -155,13 +158,13 @@ void construct_path(cell* c,int temp_path[]){
                temp_path[counter]=2;
                counter--;
            }
-           printf("path coordiantes (%d,%d)\n",sentinel->x,sentinel->y);
-	   printf("path move: %d\n",temp_path[counter+1]);
+           //printf("path coordiantes (%d,%d)\n",sentinel->x,sentinel->y);
+	   //printf("path move: %d\n",temp_path[counter+1]);
 	   sentinel=sentinel->parent;
          }
-         printf("path coordinates (%d,%d)\n",sentinel->x,sentinel->y);
+         //printf("path coordinates (%d,%d)\n",sentinel->x,sentinel->y);
 	 //printf("path move: %d\n",path[counter+1]);
-         printf("returning path\n");
+         //printf("returning path\n");
 	 
 	 //path=&temp_path[0];
 	 print_path(temp_path,distance);

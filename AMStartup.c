@@ -397,7 +397,8 @@ int check_arguments(int argc,char* host,char* avatars,char* diff){
 
 
 
-    if (strncmp(host,"stratton.cs.dartmouth.edu",AM_MAX_MESSAGE)!=0){
+   if (strncmp(host,"stratton.cs.dartmouth.edu",AM_MAX_MESSAGE)!=0 &&
+		strncmp(host,"kancamagus.cs.dartmouth.edu",AM_MAX_MESSAGE)!=0){
 	printf("You must use 'stratton.cs.dartmouth.edu' server\n");
         return 1;
     }

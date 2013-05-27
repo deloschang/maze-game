@@ -16,6 +16,7 @@ typedef struct _matrix {
      int row;
      int column;
      char matrix[DIM][DIM];
+     //char** matrix;
 } matrix;
 
 //#if defined (__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
@@ -34,8 +35,9 @@ typedef struct _matrix {
 matrix* convert_map();
 void mark_as_wall(XYPOS* wall);
 XYPOS* get_average();
-XYPOS* get_goal();
-void update_shared_map();
+XYPOS* get_goal(XYPOS* start);
+//void update_shared_map();
+void update_shared_map(XYPOS* old,XYPOS* updated,int x[],int y[],int counter);
 void render_maze();
 //shared_map* get_shared_map();
 void free_shared_memory();
@@ -43,6 +45,9 @@ void print_converted_map();
 void print_shared_map();
 int get_turn_id();
 void update_turn_id(int new_turn);
+void update_graphics();
+void free_pos_list(XYPOS** pos_list,int counter);
+
 
 
 //algorithm functions
@@ -89,5 +94,5 @@ int contains(queue* q,int x,int y);
 void print_path(int path[],int length);
 void shuffle(int* array);
 
-
+//extern matrix* data;
 

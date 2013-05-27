@@ -7,7 +7,7 @@
 #include <string.h> // for strlen
 #include <gtk/gtk.h> // for gtk functionality
 #include "header.h" // for gtk functionality
-
+#include "amazing_client.h"//for matrix struct
   // Global map struct should go here.
     matrix* data;
   // Call render_maze() once and it will rerender the global
