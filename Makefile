@@ -44,7 +44,7 @@ $(EXEC): $(OBJS)
 	#./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
 	./startup -n 2 -d 0 -h kancamagus.cs.dartmouth.edu
 
-	#make clean
+	make clean
 	./cleansharedmem.sh
 
 $(OBJS): $(SRCS) 
