@@ -15,6 +15,7 @@
 *.c~
 *.h~
 *.log
+*.gch
 
 # Executables
 graphics
