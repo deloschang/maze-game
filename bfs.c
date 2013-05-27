@@ -53,10 +53,24 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
 
 
       free_queue(container);
-      free(container);
+      free(container); container = NULL;
 
       if (q->head != NULL){
         free_queue_container(q);
+        free(q); q = NULL;
+        /*cell* prev = v;*/
+        /*while ( prev->parent != NULL){*/
+          /*cell* temp = prev->parent;*/
+
+          /*free(prev);*/
+          /*prev = NULL;*/
+
+          /*prev = temp;*/
+        /*}*/
+        /*free(prev);*/
+        /*prev = NULL;*/
+        /*free(v->parent);*/
+        /*v->parent = NULL;*/
 
         free(v);
         v = NULL;
@@ -81,6 +95,7 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
         v = NULL;
 
         free(q);
+        q = NULL;
       }
 
 
@@ -147,16 +162,18 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
             // enqueued.
 
             // first make a copy of the parent
-            cell* parent_copy = NULL;
-            parent_copy = copyCell(parent_copy, v);
+            /*cell* parent_copy = NULL;*/
+            /*parent_copy = copyCell(parent_copy, v);*/
 
-            cell* g=init_cell(adj_x, adj_y, v->dist+1,0, parent_copy);
+            cell* g=init_cell(adj_x, adj_y, v->dist+1,0, v);
             // for container, no need for parent
             cell* con_g=init_cell(adj_x, adj_y, v->dist+1,0, NULL);
 
-            parent_copy = NULL;
+            /*parent_copy = NULL;*/
 
             enqueue(container,con_g);
+
+            v->is_visited++;
             enqueue(q,g);
           } else {
             printf("already visited %d %d \n", adj_x, adj_y);
@@ -170,8 +187,11 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
       }
     }     
 
-    free(v);
-    v = NULL;
+    /*if (v != NULL){*/
+      /*free(v);*/
+      /*v = NULL;*/
+    /*}*/
+
   }
 
   if (!is_found){
@@ -367,11 +387,16 @@ void construct_path(cell* c,int temp_path[]){
         printf("freeing inner parents \n");
         temp = prev->parent;
 
-        free(prev);
-        prev = NULL;
+        if ( prev->is_visited == 0){
+          free(prev);
+          BZERO(prev, sizeof(cell));
+          prev = NULL;
+
+        } else {
+          prev->is_visited--;
+        }
 
         prev = temp;
-        parent_track++;
       }
       printf("parent track done\n");
 
@@ -379,8 +404,9 @@ void construct_path(cell* c,int temp_path[]){
       printf("c is %d %d\n", c->x, c->y);
 
       free(prev);
+      BZERO(prev, sizeof(cell));
+      prev = NULL;
 
-      track++;
       printf("%d \n", track);
     }
     printf("most parents done, one left\n");
@@ -389,7 +415,6 @@ void construct_path(cell* c,int temp_path[]){
     prev = c;
     while ( prev->parent != NULL){
       temp = prev->parent;
-
       free(prev);
       prev = NULL;
 
@@ -397,7 +422,8 @@ void construct_path(cell* c,int temp_path[]){
     }
 
     free(prev);
-    free(q);
+    prev = NULL;
+
   }
 
   /**
@@ -410,10 +436,12 @@ void construct_path(cell* c,int temp_path[]){
     while (c->next!=NULL){
       c=c->next;
       free(c->prev);
+      c->prev = NULL;
     }
 
     if (c != NULL){
       free(c);
+      c = NULL;
     }
   }
 
@@ -487,8 +515,8 @@ void construct_path(cell* c,int temp_path[]){
     cur_pos->xPos = 0;
     cur_pos->yPos = 0;
     XYPOS* goal = malloc(sizeof(XYPOS));
-    goal->xPos = 2;
-    goal->yPos = 1;
+    goal->xPos = 4;
+    goal->yPos = 4;
 
     int path[100];
 
