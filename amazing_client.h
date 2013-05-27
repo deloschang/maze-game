@@ -91,7 +91,7 @@ cell* init_cell(int x,int y,int d,int mark,cell* parent);
 void free_queue(queue* q);
 
 //frees all of the elements and their parents in the queue
-void free_queue_advanced(queue* q);
+void free_queue_advanced(queue* q1,queue* q2);
 
 //checkes whether queue contains some specific coordinates already
 int contains(queue* q,int x,int y);

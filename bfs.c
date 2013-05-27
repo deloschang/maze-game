@@ -9,9 +9,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "header.h"
+//#include "graphics.h"
 #include "amazing_client.h"
-
+#include "header.h"
 
 //function that finds and constructs a path (stores it into path array) from
 //start to goal positions
@@ -43,6 +43,7 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
               construct_path(v,path);
 	      is_found=1;
               free_queue(container);
+  	      free_queue_advanced(q,deq_list);
 	      //free_queue_advanced(q);
 	      //free_queue_advanced(deq_list);
 	      return;   
@@ -112,7 +113,8 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
      //this should never happen since this is a perfect maze
      if (!is_found){
 	printf("path not found, shouldnt happend\n");
-	exit(3);
+	//exit(3);
+	path[0]=rand() % 4;
      }
 
 
@@ -189,18 +191,21 @@ cell* dequeue(queue* q){
 //function to check whether given coordinates have already been explored
 int contains(queue* q,int xPos,int yPos){
      cell* sentinel=q->head;
-     
-     while (sentinel->next!=NULL){
-	if (sentinel->x==xPos && sentinel->y==yPos){
-	     return 1;
-	}
-	sentinel=sentinel->next;
-     }
-     if (sentinel->x==xPos && sentinel->y==yPos){
-        return 1;
-     }
+     if (sentinel!=NULL){
+        while (sentinel->next!=NULL){
+	   if (sentinel->x==xPos && sentinel->y==yPos){
+	        return 1;
+	   }
+	   sentinel=sentinel->next;
+        }
+        if (sentinel->x==xPos && sentinel->y==yPos){
+           return 1;
+        }
 
-     return 0;
+        return 0;
+     }else{
+	return 0;
+     }
 
 }
 
@@ -243,62 +248,73 @@ void print_path(int path[],int length){
 
 }
 
-void free_queue_advanced(queue* q){
-    cell* c=q->head;
-    
-    cell* prev;
-   
-    if (c!=NULL){
+void free_queue_advanced(queue* q1,queue* q2){
 
+  queue* container=malloc(sizeof(queue));
+  container->head=NULL;
 
-       while (c->next!=NULL){//sentinel in the horizontal level (->next, ->prev)
-
-	   cell* p_sent=c->parent; //sentinel in the parent layer (->parent)
-       
-	   while (p_sent!=NULL){
-	      p_sent->is_visited--;
-	      if (p_sent->is_visited==0){
-		   prev=p_sent;
-		   p_sent=p_sent->parent;
-		   free(prev);
-	      }else{
-		   p_sent=p_sent->parent;
-	      }
-	   }
-	   c->is_visited--;
-	   if (c->is_visited==0){
-		prev=c;
-		c=c->next;
-		free(prev);
-	   }else{
-		c=c->next;
-	   }
-        }
-
-       //freeing all of the data structures associates with the last
-       //cell as well
-       cell* p=c->parent;
-   
-       while (p!=NULL){
-	   p->is_visited--;
-           if (p->is_visited==0){
-	       prev=p;
-	       p=p->parent;
-	       free(p);
-	   }else{
-	       p=p->parent;
-	   }
-       }
-       c->is_visited--;
-       if (c->is_visited==0){
-           prev=c;
-           //c=c->next;
-           free(prev);
-       }
-
-
+  cell* free_list[1000];
+  int free_index=0;
+  queue* q;
+  for (int i=0;i<2;i++){
+    if (i==0){
+	q=q1;
+    }else{
+	q=q2;
     }
+
+
+    if (q!=NULL){
+    
+        cell* c=q->head;
+   
+       if (c!=NULL){
+
+           while (c!=NULL){
+
+	       cell* p_sent=c->parent; 
+
+	       cell* cont_c;
+	   
+               if (contains(container,c->x,c->y)==0){
+		   cont_c=init_cell(c->x,c->y,0,0,NULL);
+	 	   enqueue(container,cont_c);
+		   free_list[free_index]=c;
+		   free_index++;
+	       }
+       
+	       while (p_sent!=NULL){
+	      
+
+                   if (contains(container,p_sent->x,p_sent->y)==0){
+                       cont_c=init_cell(p_sent->x,p_sent->y,0,0,NULL);
+                       enqueue(container,cont_c);
+                       free_list[free_index]=p_sent;
+                       free_index++;
+                   }
+
+	           p_sent=p_sent->parent;
+		   
+	       }
+
+	       c=c->next;
+          }
+
+      }
+    }
+
+  }
+  
+  free_queue(container);
+  for (int i=0;i<free_index;i++){
+      free(free_list[i]);
+  }
+ 
+  free(q1);
+  free(q2);
 
 
 
 }
+
+

@@ -142,7 +142,7 @@ int main(int argc,char* argv[]){
 		      //of the other avatars to begin with
        
     }else{
-	system("sleep 1");
+	sleep(1*avatar_id);
     }
 
 
@@ -233,8 +233,26 @@ int main(int argc,char* argv[]){
 		    printf("failed to open log file\n");
 		    exit(1);
 		}
+		
 		condition=0;//and set this variable to 0 so that maze
 			   //solving algorithm would stop
+
+		//updating the map for the very last time
+		int x_list[AM_MAX_AVATAR];
+		int y_list[AM_MAX_AVATAR];
+		int count=0;
+                for (int i=0;i<nAvatars;i++){
+
+                    if (i!=avatar_id){
+                          x_list[count]=ntohl(recvline->msg.
+                                          avatar_turn.Pos[i].xPos);
+                          y_list[count]=ntohl(recvline->msg.
+                                          avatar_turn.Pos[i].yPos);
+                          count++;
+                    }
+                }
+                update_shared_map(cur_pos,new_pos,x_list,y_list
+                                                ,count);
 
 	    }
 
@@ -373,7 +391,7 @@ int main(int argc,char* argv[]){
 
 
 	}
-	   
+	//sleep(1);   
 	test_counter++;
 
 
@@ -564,13 +582,18 @@ XYPOS* get_goal(XYPOS* start_pos){
      XYPOS* goal=malloc(sizeof(XYPOS));
      goal->xPos=start_pos->xPos;
      goal->yPos=start_pos->yPos;
-
+     
+     free(mat);
      //if max_dist<7 that means all of the avatars are in the cluster
      if (max_dist<7){ 
 	//assigning the coordinates as a goal that should be in the middle
 	//of all of the avatars
 	goal->xPos=avatar_list[index/2]->xPos;
 	goal->yPos=avatar_list[index/2]->yPos;
+
+	for (int j=0;j<index;j++){
+	    free(avatar_list[j]);
+	}
 	return goal;
      }
 	
