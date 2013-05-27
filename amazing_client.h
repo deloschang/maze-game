@@ -113,7 +113,8 @@ cell* dequeue(queue* q);
 void find_path(matrix* mat,XYPOS* start,XYPOS* end,int path[]);
 void construct_path(cell* c,int path[]);
 cell* init_cell(int x,int y,int d,int mark,cell* parent);
-void free_queue();
+void free_queue(queue* q);
+void free_queue_container(queue* q);
 int contains(queue* q,int x,int y);
 //void print_path(matrix* mat,XYPOS* s,XYPOS* e);
 void print_path(int path[],int length);
@@ -121,5 +122,7 @@ void shuffle(int* array);
 void update_graphics();
 
 void* start_graphics();
+
+cell* copyCell(cell* copy, cell* orig);
 
 

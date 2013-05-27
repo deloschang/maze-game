@@ -9,6 +9,9 @@
 #include "graphics.h"
 #include "amazing_client.h"
 
+int track = 0;
+int parent_track = 0;
+
 void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
   int     adj_x, adj_y, wall_x, wall_y;
   cell*   v;
@@ -25,6 +28,7 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
   // visited
   queue* q=malloc(sizeof(queue));
 
+  
   MALLOC_CHECK(q);
   MALLOC_CHECK(container);
 
@@ -41,9 +45,22 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
 
     // Check if the x and y coordinates match the goal.
     // If so, construct the path to the goal
+    printf("before, checking %d %d \n", v->x, v->y);
     if ( (v->x == goal->xPos*2) && (v->y == goal->yPos*2) ){
+    ("after\n");
       construct_path(v,path);
       is_found=1;
+
+      free(v);
+      v = NULL;
+
+      free_queue(container);
+      free(container);
+
+      /*free_queue_container(q);*/
+
+
+      return;
     }
 
     int order[4]={0,1,2,3};
@@ -90,7 +107,7 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
         wall_y=v->y;
       }
 
-      //printf("checking coordinates (%d,%d)\n",adj_x,adj_y);
+      printf("checking coordinates (%d,%d)\n",adj_x,adj_y);
       if (adj_x>=0 && adj_y>=0 && wall_x>=0 && wall_y>=0 &&
           adj_x<mat->column && wall_x<mat->column && adj_y<mat->row &&
           wall_y<mat->row){
@@ -101,32 +118,37 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
             mat->matrix[wall_y][wall_x] != '_'){
 
           if ( contains(container,adj_x,adj_y)==0 ){
+            printf("you got queueueueued! \n");
             // g is the path should be explored, to be
             // enqueued.
 
             // first make a copy of the parent
+            cell* parent_copy = NULL;
+            parent_copy = copyCell(parent_copy, v);
 
-            cell* g=init_cell(adj_x,adj_y,v->dist+1,0,v);
-            cell* con_g=init_cell(adj_x,adj_y,v->dist+1,0,v);
+            cell* g=init_cell(adj_x, adj_y, v->dist+1,0, parent_copy);
+
+            // for container, no need for parent
+            cell* con_g=init_cell(adj_x, adj_y, v->dist+1,0, NULL);
+
+            parent_copy = NULL;
 
             enqueue(container,con_g);
             enqueue(q,g);
-
           } else {
-            //printf("already visited\n");
+            printf("already visited %d %d \n", adj_x, adj_y);
           }
 
         }else{
-          //printf("wall\n");
+          printf("wall %d %d \n", wall_x, wall_y);
         }
-
       }else{
         //printf("out of bounds\n");
       }
     }     
 
-    /*free(v);*/
-    /*v = NULL;*/
+    free(v);
+    v = NULL;
   }
 
   if (!is_found){
@@ -137,8 +159,7 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
   // Clean up the BFS by cleaning up the BFS queue
   // and the container which contains all the 
   // nodes that have been visited
-  free_queue(container);
-  free(container);
+  /*free_queue_container(container);*/
 
   /*free_queue(q);*/
   /*free(q);*/
@@ -240,8 +261,7 @@ void construct_path(cell* c,int temp_path[]){
    * This function will dequeue the queue in FIFO manner
    **/ 
   cell* dequeue(queue* q){
-    cell* for_return;
-
+    cell* for_return = NULL;
     for_return = copyCell(for_return, q->head);
 
     /*cell* for_return = q->head;*/
@@ -252,12 +272,20 @@ void construct_path(cell* c,int temp_path[]){
       free(q->head);
       q->head=NULL;
 
+
+
       return for_return;
 
     // If there are links to change, replace the head with
     // the next element in the queue and change the links
     // in constant time
     } else {
+
+      /*if  ((q->head)->parent != NULL){*/
+        /*free( (q->head)->parent);*/
+        /*(q->head)->parent = NULL;*/
+      /*}*/
+
 
       free(q->head); 
       q->head = NULL;
@@ -295,7 +323,61 @@ void construct_path(cell* c,int temp_path[]){
 
   /**
    * free_queue
-   * This function will free all the memory within the queue
+   * This function will free all the memory within the main queue
+   **/
+  void free_queue_container(queue* q){
+    cell* prev;
+    cell* temp;
+
+    cell* c=q->head;
+
+    // free all parents of the queue
+    while (c->next!=NULL){
+      prev = c;
+      c = c->next;
+
+      printf("prev is %d %d\n", prev->x, prev->y);
+      printf("c is %d %d\n", c->x, c->y);
+
+      while ( prev->parent != NULL){
+        printf("freeing inner parents \n");
+        temp = prev->parent;
+
+        free(prev);
+        prev = NULL;
+
+        prev = temp;
+        parent_track++;
+      }
+      printf("parent track done\n");
+
+      printf("prev is %d %d\n", prev->x, prev->y);
+      printf("c is %d %d\n", c->x, c->y);
+
+      free(prev);
+
+      track++;
+    }
+    printf("most parents done, one left\n");
+
+    // free the parents of c
+    prev = c;
+    while ( prev->parent != NULL){
+      temp = prev->parent;
+
+      free(prev);
+      prev = NULL;
+
+      prev = temp;
+    }
+
+    free(prev);
+    free(q);
+  }
+
+  /**
+   * free_queue
+   * This function will free all the memory within the main queue
    **/
   void free_queue(queue* q){
     cell* c=q->head;
@@ -348,4 +430,44 @@ void construct_path(cell* c,int temp_path[]){
       array[r1]=array[r2];
       array[r2]=temp;
     }
+  }
+
+  int main(){
+    // Call render_maze() once and it will rerender the global
+    // map struct (data) every 1 sec.
+    static char Array[9][9] = {
+      { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+      { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
+      { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
+      { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,
+      { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
+      { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,
+      { 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'E' } ,
+      { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
+      { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+    };
+    matrix* data = malloc(sizeof(matrix));
+    data->row = 9;
+    data->column = 9;
+
+    for (int i = 0; i < data->row; i++){
+      for (int j = 0; j < data->column; j++){
+        data->matrix[i][j] = Array[i][j];
+      }
+    }
+
+    XYPOS* cur_pos = malloc(sizeof(XYPOS));
+    cur_pos->xPos = 0;
+    cur_pos->yPos = 0;
+
+    XYPOS* goal = malloc(sizeof(XYPOS));
+    goal->xPos = 0;
+    goal->yPos = 1;
+    int path[100];
+
+    find_path(data, cur_pos, goal, path);
+
+    free(cur_pos);
+    free(goal);
+    free(data);
   }

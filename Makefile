@@ -22,6 +22,10 @@ EXEC = amazing_client
 OBJS = amazing_client.o bfs.o sem1.o graphics.o
 SRCS = amazing_client.c bfs.c sem1.c graphics.c 
 
+EXEC5 = bfs
+OBJS5 = bfs.o
+SRCS5 = bfs.c
+
 # Future library details
 #UTILDIR=../utils/
 #UTILFLAG=-ltseutil
@@ -71,7 +75,13 @@ $(EXEC2): $(OBJS2)
 #$(OBJS2): $(SRCS2) 
 	#$(CC) $(CFLAGS) -c $(SRCS2) $(PKGFLAGS)
 
-
+bfs: $(SRCS)
+	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS5)
+	$(CC) $(CFLAGS) $(SVIDFLAGS) -g -ggdb -o $(EXEC5) $(OBJS5) 
+	#gdb --args ./bfs
+	valgrind --trace-children=yes --tool=memcheck --leak-check=full ./bfs
+	#valgrind --tool=memcheck --leak-check=full --vgdb-error=0 ./bfs
+	
 
 debug: $(SRCS)
 	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS2) $(PKGFLAGS)
