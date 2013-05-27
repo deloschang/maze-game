@@ -78,7 +78,7 @@ $(EXEC2): $(OBJS2)
 bfs: $(SRCS)
 	$(CC) $(CFLAGS) -g -ggdb -c $(SRCS5)
 	$(CC) $(CFLAGS) $(SVIDFLAGS) -g -ggdb -o $(EXEC5) $(OBJS5) 
-	#gdb --args ./bfs
+	gdb --args ./bfs
 	valgrind --trace-children=yes --tool=memcheck --leak-check=full ./bfs
 	#valgrind --tool=memcheck --leak-check=full --vgdb-error=0 ./bfs
 	

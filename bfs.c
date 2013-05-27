@@ -51,13 +51,37 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
       construct_path(v,path);
       is_found=1;
 
-      free(v);
-      v = NULL;
 
       free_queue(container);
       free(container);
 
-      /*free_queue_container(q);*/
+      if (q->head != NULL){
+        free_queue_container(q);
+
+        free(v);
+        v = NULL;
+
+        printf("I'm not empty\n");
+
+      } else {
+
+        printf("I'm empty \n");
+
+        cell* prev = v;
+        while ( prev->parent != NULL){
+          cell* temp = prev->parent;
+
+          free(prev);
+          prev = NULL;
+
+          prev = temp;
+        }
+
+        free(prev);
+        v = NULL;
+
+        free(q);
+      }
 
 
       return;
@@ -127,7 +151,6 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
             parent_copy = copyCell(parent_copy, v);
 
             cell* g=init_cell(adj_x, adj_y, v->dist+1,0, parent_copy);
-
             // for container, no need for parent
             cell* con_g=init_cell(adj_x, adj_y, v->dist+1,0, NULL);
 
@@ -256,6 +279,7 @@ void construct_path(cell* c,int temp_path[]){
     return copy;
   }
 
+
   /**
    * dequeue
    * This function will dequeue the queue in FIFO manner
@@ -357,6 +381,7 @@ void construct_path(cell* c,int temp_path[]){
       free(prev);
 
       track++;
+      printf("%d \n", track);
     }
     printf("most parents done, one left\n");
 
@@ -436,16 +461,18 @@ void construct_path(cell* c,int temp_path[]){
     // Call render_maze() once and it will rerender the global
     // map struct (data) every 1 sec.
     static char Array[9][9] = {
-      { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
-      { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } ,
-      { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } ,
-      { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } ,
-      { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } ,
-      { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } ,
-      { 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'E' } ,
-      { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } ,
-      { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } ,
+      // 0    1    2    3    4    5    6    7    8
+      { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } , // 0
+      { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } , // 1
+      { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } , // 2
+      { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } , // 3
+      { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } , // 4
+      { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } , // 5
+      { 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'E' } , // 6
+      { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } , // 7
+      { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } , // 8
     };
+
     matrix* data = malloc(sizeof(matrix));
     data->row = 9;
     data->column = 9;
@@ -459,10 +486,10 @@ void construct_path(cell* c,int temp_path[]){
     XYPOS* cur_pos = malloc(sizeof(XYPOS));
     cur_pos->xPos = 0;
     cur_pos->yPos = 0;
-
     XYPOS* goal = malloc(sizeof(XYPOS));
-    goal->xPos = 0;
+    goal->xPos = 2;
     goal->yPos = 1;
+
     int path[100];
 
     find_path(data, cur_pos, goal, path);
