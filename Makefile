@@ -11,8 +11,8 @@ SRCS = amazing_client.c bfs.c header.h sem1.c semun.h graphics.c
 	#$(CC) $(CFLAGS) -g -D_SVID_SOURCE=1 -o amazing_client amazing_client.c bfs.c sem1.c graphics.c $(PKGFLAGS)
 	#./AMStartup -n 3 -d 3 -h kancamagus.cs.dartmouth.edu
 
-AMStartup: AMStartup.c AMStartup.h header.h
-	$(CC) $(CFLAGS) -D_SVID_SOURCE=1 -o AMStartup AMStartup.c 
+#AMStartup: AMStartup.c AMStartup.h header.h
+	#$(CC) $(CFLAGS) -D_SVID_SOURCE=1 -o AMStartup AMStartup.c 
 
 # Compile startup and Amazing client
 $(EXEC): $(OBJS)
@@ -31,4 +31,18 @@ $(OBJS): $(SRCS)
 	#$(CC) $(CFLAGS) -c $(SRCS4) $(PKGFLAGS)
 
 clean:
+	rm -f *~
+	rm -f *#
+	rm -f ./prs
 	rm -f *.o
+	rm -f *.gch
+	rm -f core.*
+	rm -f vgcore.*
+	rm -f .nfs*
+	rm -f graphics
+	rm -f startup
+	rm -f algo
+	rm -f amazing_client
+
+cleanlog:
+	rm -f *.log
