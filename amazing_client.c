@@ -45,6 +45,10 @@
 #include <gtk/gtk.h> // for gtk functionality
 #include <pthread.h>
 
+/**
+ * start_graphics
+ * Starts the graphics by rendering the maze
+ **/ 
 void* start_graphics(void *ptr){
     render_maze();
     return NULL;
