@@ -52,12 +52,15 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
       is_found=1;
 
 
-      free_queue(container);
-      free(container); container = NULL;
+      /*** disabled ***/
+      /*free_queue(container);*/
+      /*free(container); container = NULL;*/
 
       if (q->head != NULL){
-        free_queue_container(q);
-        free(q); q = NULL;
+        /*free_queue_container(q);*/
+        /*free(q); q = NULL;*/
+        /*** disabled ***/
+
         /*cell* prev = v;*/
         /*while ( prev->parent != NULL){*/
           /*cell* temp = prev->parent;*/
@@ -72,8 +75,7 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
         /*free(v->parent);*/
         /*v->parent = NULL;*/
 
-        free(v);
-        v = NULL;
+        /*free(v); v = NULL;*/
 
         printf("I'm not empty\n");
 
@@ -81,21 +83,21 @@ void find_path(matrix* mat,XYPOS* start,XYPOS* goal,int path[]){
 
         printf("I'm empty \n");
 
-        cell* prev = v;
-        while ( prev->parent != NULL){
-          cell* temp = prev->parent;
+        /*cell* prev = v;*/
+        /*while ( prev->parent != NULL){*/
+          /*cell* temp = prev->parent;*/
 
-          free(prev);
-          prev = NULL;
+          /*free(prev);*/
+          /*prev = NULL;*/
 
-          prev = temp;
-        }
+          /*prev = temp;*/
+        /*}*/
 
-        free(prev);
-        v = NULL;
+        /*free(prev);*/
+        /*v = NULL;*/
 
-        free(q);
-        q = NULL;
+        /*free(q);*/
+        /*q = NULL;*/
       }
 
 
@@ -485,44 +487,45 @@ void construct_path(cell* c,int temp_path[]){
     }
   }
 
-  int main(){
-    // Call render_maze() once and it will rerender the global
-    // map struct (data) every 1 sec.
-    static char Array[9][9] = {
-      // 0    1    2    3    4    5    6    7    8
-      { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } , // 0
-      { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } , // 1
-      { 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } , // 2
-      { '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } , // 3
-      { 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } , // 4
-      { '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } , // 5
-      { 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'E' } , // 6
-      { '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } , // 7
-      { 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } , // 8
-    };
+  // Unit test for maze game
+  /*int main(){*/
+    /*// Call render_maze() once and it will rerender the global*/
+    /*// map struct (data) every 1 sec.*/
+    /*static char Array[9][9] = {*/
+      /*// 0    1    2    3    4    5    6    7    8*/
+      /*{ 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } , // 0*/
+      /*{ '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '0' } , // 1*/
+      /*{ 'E', '0', 'E', '1', 'E', '1', 'E', '1', 'E' } , // 2*/
+      /*{ '_', 'Z', '_', 'Z', '0', 'Z', '0', 'Z', '_' } , // 3*/
+      /*{ 'E', '0', 'E', '0', 'E', '1', 'E', '0', 'E' } , // 4*/
+      /*{ '0', 'Z', '_', 'Z', '_', 'Z', '_', 'Z', '0' } , // 5*/
+      /*{ 'E', '0', 'E', '1', 'E', '0', 'E', '0', 'E' } , // 6*/
+      /*{ '0', 'Z', '0', 'Z', '0', 'Z', '_', 'Z', '_' } , // 7*/
+      /*{ 'E', '1', 'E', '0', 'E', '0', 'E', '0', 'E' } , // 8*/
+    /*};*/
 
-    matrix* data = malloc(sizeof(matrix));
-    data->row = 9;
-    data->column = 9;
+    /*matrix* data = malloc(sizeof(matrix));*/
+    /*data->row = 9;*/
+    /*data->column = 9;*/
 
-    for (int i = 0; i < data->row; i++){
-      for (int j = 0; j < data->column; j++){
-        data->matrix[i][j] = Array[i][j];
-      }
-    }
+    /*for (int i = 0; i < data->row; i++){*/
+      /*for (int j = 0; j < data->column; j++){*/
+        /*data->matrix[i][j] = Array[i][j];*/
+      /*}*/
+    /*}*/
 
-    XYPOS* cur_pos = malloc(sizeof(XYPOS));
-    cur_pos->xPos = 0;
-    cur_pos->yPos = 0;
-    XYPOS* goal = malloc(sizeof(XYPOS));
-    goal->xPos = 4;
-    goal->yPos = 4;
+    /*XYPOS* cur_pos = malloc(sizeof(XYPOS));*/
+    /*cur_pos->xPos = 0;*/
+    /*cur_pos->yPos = 0;*/
+    /*XYPOS* goal = malloc(sizeof(XYPOS));*/
+    /*goal->xPos = 4;*/
+    /*goal->yPos = 4;*/
 
-    int path[100];
+    /*int path[100];*/
 
-    find_path(data, cur_pos, goal, path);
+    /*find_path(data, cur_pos, goal, path);*/
 
-    free(cur_pos);
-    free(goal);
-    free(data);
-  }
+    /*free(cur_pos);*/
+    /*free(goal);*/
+    /*free(data);*/
+  /*}*/

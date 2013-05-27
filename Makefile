@@ -41,7 +41,8 @@ $(EXEC): $(OBJS)
 	$(CC) $(CFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
 
 	# test run
-	./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
+	#./startup -n 2 -d 0 -h stratton.cs.dartmouth.edu
+	./startup -n 3 -d 4 -h kancamagus.cs.dartmouth.edu
 
 	#make clean
 	./cleansharedmem.sh
