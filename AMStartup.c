@@ -29,8 +29,9 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include "amazing.h"
+#include "amazing_client.h"
 #include "AMStartup.h"
-#include "header.h"
+#include "graphics.h"
 #include <time.h>
 #include <ctype.h>
 #include <unistd.h>

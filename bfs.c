@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "header.h"
+#include "graphics.h"
 #include "amazing_client.h"
 
 

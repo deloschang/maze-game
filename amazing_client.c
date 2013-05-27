@@ -38,13 +38,12 @@
 #include "amazing.h"
 #include "amazing_client.h"
 #include <unistd.h>
-#include "header.h"
+#include "graphics.h"
 #include <sys/sem.h>
 #include "semun.h"
 
 //amazing client that starts avatar process and guides it through the 
 //connection with the server to solve the maze using boosted bfs algorithm.
-
 int main(int argc,char* argv[]){
     
     int avatar_id=atoi(argv[1]);
