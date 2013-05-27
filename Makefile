@@ -7,15 +7,19 @@ EXEC = amazing_client
 OBJS = amazing_client.o bfs.o sem1.o graphics.o
 SRCS = amazing_client.c bfs.c header.h sem1.c semun.h graphics.c 
 
+EXEC2 = AMStartup
+OBJS2 = AMStartup.c
+
 #amazing_client: amazing_client.c amazing_client.h bfs.c header.h sem1.c semun.h graphics.c 
 	#$(CC) $(CFLAGS) -g -D_SVID_SOURCE=1 -o amazing_client amazing_client.c bfs.c sem1.c graphics.c $(PKGFLAGS)
 	#./AMStartup -n 3 -d 3 -h kancamagus.cs.dartmouth.edu
 
-AMStartup: AMStartup.c AMStartup.h header.h
-	$(CC) $(CFLAGS) -D_SVID_SOURCE=1 -o AMStartup AMStartup.c 
+#AMStartup: AMStartup.c AMStartup.h header.h
+	#$(CC) $(CFLAGS) -D_SVID_SOURCE=1 -o AMStartup AMStartup.c 
 
 # Compile startup and Amazing client
 $(EXEC): $(OBJS)
+	$(CC) $(CFLAGS) $(SVIDFLAGS) -o $(EXEC2) $(OBJS2)
 	$(CC) $(CFLAGS) $(SVIDFLAGS) -o $(EXEC) $(OBJS) $(PKGFLAGS)
 	#$(CC) $(CFLAGS) -o $(EXEC4) $(OBJS4) $(PKGFLAGS)
 
