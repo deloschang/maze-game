@@ -29,9 +29,8 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include "amazing.h"
-#include "amazing_client.h"
 #include "AMStartup.h"
-#include "graphics.h"
+#include "header.h"
 #include <time.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -49,47 +48,30 @@ int main(int argc,char* argv[]){
     int num_avatars;
     int maze_difficulty;
 
+    //calling function that will retrieve the arguments from the command line
     retrieve_arguments(argc,argv,host_name,num_avatars_str,
 						maze_difficulty_str);
+    //checking validity of those arguments
     int check=check_arguments(argc,host_name,num_avatars_str,
 					maze_difficulty_str);
     if (check!=0){
 	printf("-n Usage: [nAvatars (0-10)]\n");
 	printf("-d [maze difficulty (0-9)]\n");
 	printf("-h [hostname (stratton.cs.dartmouth.edu)]\n");
-	//printf("No switches\n");
-	//printf("Arguments must come in this order\n");
 	return 1;
     }
 
-    //printf("%s\n",host_name);
-    //printf("%s\n",num_avatars_str);
-    //printf("%s\n",maze_difficulty_str);
-    //char test_char[AM_MAX_MESSAGE];
-    //BZERO(test_char,AM_MAX_MESSAGE);
-    //retrieveIP(host_name,test_char);
-    //printf("%s\n",test_char);
-    //return 1;//testing
-
     num_avatars=atoi(num_avatars_str);
     maze_difficulty=atoi(maze_difficulty_str);
-    //printf("%d\n",num_avatars);
-    //printf("%d\n",maze_difficulty);
-    //return 1;
 
     int sockfd;
     struct sockaddr_in servaddr;
-    //char sendline[AM_MAX_MESSAGE], recvline[AM_MAX_MESSAGE];
     
+    //establishing connection with the server and 
     //constructing AM_INITIALIZE message
     AM_MESSAGE* sendline=malloc(sizeof(AM_MESSAGE));
     MALLOC_CHECK(sendline);
     sendline->message_type=htonl(AM_INITIALIZE);
-    //struct initialize* init=malloc(sizeof(initialize));
-    //MALLOC_CHECK(initialize);
-    //init->nAvatars=num_avatars;
-    //init->Difficulty=maze_difficulty;
-    //sendline->initialize=init;
     sendline->msg.initialize.nAvatars=htonl(num_avatars);
     sendline->msg.initialize.Difficulty=htonl(maze_difficulty);
 
@@ -147,23 +129,14 @@ int main(int argc,char* argv[]){
     //getting maze dimensions
     unsigned int width=ntohl(recvline->msg.initialize_ok.MazeWidth);
     unsigned int height=ntohl(recvline->msg.initialize_ok.MazeHeight);
-    
-    
-    //printf("%s\n",serverIP);
-    //printf("%d\n",ntohl(recvline->message_type));
-    //printf("%d\n",AM_INITIALIZE);
-    //printf("%d\n",width);
-    //printf("%d\n",height);
-    //printf("%d\n",maze_port);
-
 
     //Creating shared map object
+    //so that all of the avatars could share knowledge of the maze
 
     create_shared_map(width,height);
 
-    //done with the recvline message
     free(recvline);   
-    //return 1;//testing
+  
     //preparing to create a log file
     char logFileCommand[AM_MAX_MESSAGE];
     BZERO(logFileCommand,AM_MAX_MESSAGE);
@@ -171,7 +144,7 @@ int main(int argc,char* argv[]){
     BZERO(fileName,AM_MAX_MESSAGE);
     char *userName;
 
-    userName=getenv("USER"); //getting user name
+    userName=getenv("USER"); //getting user name to output in the log file
     if (userName==NULL){
 	printf("failed to retrieve user name\n");
 	return 1;
@@ -215,11 +188,10 @@ int main(int argc,char* argv[]){
     strncat(logFileCommand,fileName,AM_MAX_MESSAGE);
     system(logFileCommand);
 
-    //return 1;
-    //launching amazing client
+    //launching amazing client as many times as the number of avatars that
+    //the iser inputted in the command line
     int avatar_id=0;
     for (int i=0;i<num_avatars;i++){
-        //printf("created avatar %d\n",avatar_id);
         char amazingCommand[AM_MAX_MESSAGE];
         BZERO(amazingCommand,AM_MAX_MESSAGE);
 	char avatar_id_str[AM_MAX_MESSAGE];
@@ -239,18 +211,18 @@ int main(int argc,char* argv[]){
         strncat(amazingCommand,fileName,AM_MAX_MESSAGE);
         strncat(amazingCommand," &",AM_MAX_MESSAGE);
         system(amazingCommand);
-        //system("echo $?");
-        //system("echo string");
 	avatar_id++;
     }
-    //printf("return startup\n");
-    system("sleep 15");
+    //waits a little bit for children to terminate
+    system("sleep 7");
     return 0;
 
 
 
 }
 
+
+//function that returns shared map from the shared memory segment
 shared_map* get_shared_map(){
     void *shared_memory=(void*)0;
     shared_map *sh_map;
@@ -275,6 +247,8 @@ shared_map* get_shared_map(){
     return sh_map;
 }
 
+
+//function that initializes shared map with some default values
 void create_shared_map(int w,int h){
     void *shared_memory=(void*)0;
     shared_map *sh_map;
@@ -305,9 +279,9 @@ void create_shared_map(int w,int h){
 			 && j % 2 ==0){
 		sh_map->map[i][j]=3;//E
 	    }else if (i % 2==0 && j % 2!=0 ){
-		sh_map->map[i][j]=9;//Unknown wall even row
+		sh_map->map[i][j]=9;//Unknown wall on the even row
 	    }else if (i % 2!=0 && j % 2==0){ 
-		sh_map->map[i][j]=9;//Unknown wall even col
+		sh_map->map[i][j]=9;//Unknown wall on the even col
 	    }else if (i % 2==0 && j % 2==0){
 		sh_map->map[i][j]=2;//Z
 	    }
@@ -315,49 +289,34 @@ void create_shared_map(int w,int h){
 	}
     }
 
-    //printf("map created\n");
-
 }
 
+
+//function that retrieves the arguments from the command line
 void retrieve_arguments(int argc,char* argv[],char* host,
 					char* avatars,char* diff){
 
-   //int c;
-   //char switch_str[50];
-   //BZERO(switch_str,50);
-   //char optarg[AM_MAX_MESSAGE];
-   //BZERO(optarg,AM_MAX_MESSAGE);
-   //while ((c=getopt(argc,argv,"ndh:"))!=-1){
    for (int i=0;i<argc;i++){
-	//switch (c){
-	  //  case 'n':
+	
 	  if (strncmp(argv[i],"-n",50)==0 && i+1<argc){
 		strncpy(avatars,argv[i+1],AM_MAX_MESSAGE);
 	  }
-	    //    break;
+	   
 
-	  //  case 'd':
 	  if (strncmp(argv[i],"-d",50)==0 && i+1<argc){
 		strncpy(diff,argv[i+1],AM_MAX_MESSAGE);
 	  }
-	//	break;
-
-	  //  case 'h':
+	
 	  if (strncmp(argv[i],"-h",50)==0 && i+1<argc){
 		strncpy(host,argv[i+1],AM_MAX_MESSAGE);
 	  }
-	//	break;
-
-	  //  default:
-	//	printf("Wrong switch\n");
-	//	exit(1);
-	//}
 
    }
 
 
 }
 
+//function that checks validity of the arguments
 int check_arguments(int argc,char* host,char* avatars,char* diff){
     if (argc!=7){
 	printf("Wrong number of arguments (4 needed) \n");
@@ -396,6 +355,8 @@ int check_arguments(int argc,char* host,char* avatars,char* diff){
 	}
 
 
+
+   //this was modified because the stratton server was down
    if (strncmp(host,"stratton.cs.dartmouth.edu",AM_MAX_MESSAGE)!=0 &&
 		strncmp(host,"kancamagus.cs.dartmouth.edu",AM_MAX_MESSAGE)!=0){
 	printf("You must use 'stratton.cs.dartmouth.edu' server\n");
@@ -405,7 +366,8 @@ int check_arguments(int argc,char* host,char* avatars,char* diff){
 
 }
 
-
+//function that trieves host ip address (in this case
+//it will always be stratton ip or that other weird server)
 int retrieveIP(char* hostname,char* IP){
     struct hostent* host=gethostbyname(hostname);
     if (host==NULL){
@@ -413,17 +375,11 @@ int retrieveIP(char* hostname,char* IP){
 	return 1;
     }
 
-    //struct in_addr* address=(struct in_addr*)host->h_addr;
-    //char *ip_address=inet_ntoa(address);
-    struct in_addr address;//=(struct in_addr)host->h_addr_list[0];
+    struct in_addr address;
     memcpy(&address,host->h_addr_list[0],sizeof(struct in_addr));
-    //char *ip_address;=inet_ntoa(address);
     BZERO(IP,AM_MAX_MESSAGE);
     strncpy(IP,inet_ntoa(address),AM_MAX_MESSAGE);
     return 0;
     
-
-
-
 }
 
