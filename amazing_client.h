@@ -52,6 +52,8 @@ void update_turn_id(int new_turn);
 //function to update the graphics
 void update_graphics();
 
+void* start_graphics(void *ptr);
+
 
 //ALl bfs related functions
 //and its data structures such as queues, cell ,etc (all used in bfs.c)
