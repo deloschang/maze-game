@@ -71,8 +71,9 @@ int main(int argc,char* argv[]){
         if (!set_semvalue(sem_id)){
             printf("failed to initialize semaphore\n");
             exit(1);
-
         }
+
+        // Start updating the graphics
         update_graphics();
 
         gtk_init(&argc, &argv);
@@ -168,7 +169,7 @@ int main(int argc,char* argv[]){
         //of the other avatars to begin with
 
     }else{
-        system("sleep 1");
+        sleep(1*avatar_id);
     }
 
 
@@ -259,8 +260,26 @@ int main(int argc,char* argv[]){
                     printf("failed to open log file\n");
                     exit(1);
                 }
+
                 condition=0;//and set this variable to 0 so that maze
                 //solving algorithm would stop
+
+                //updating the map for the very last time
+                int x_list[AM_MAX_AVATAR];
+                int y_list[AM_MAX_AVATAR];
+                int count=0;
+                for (int i=0;i<nAvatars;i++){
+
+                    if (i!=avatar_id){
+                        x_list[count]=ntohl(recvline->msg.
+                                avatar_turn.Pos[i].xPos);
+                        y_list[count]=ntohl(recvline->msg.
+                                avatar_turn.Pos[i].yPos);
+                        count++;
+                    }
+                }
+                update_shared_map(cur_pos,new_pos,x_list,y_list
+                        ,count);
 
             }
 
@@ -326,6 +345,7 @@ int main(int argc,char* argv[]){
 
                 }
 
+                // New position so update the server
                 update_graphics();
 
                 //updating our current position
@@ -402,7 +422,7 @@ int main(int argc,char* argv[]){
 
 
         }
-
+        //sleep(1);   
         test_counter++;
 
 
@@ -594,12 +614,17 @@ XYPOS* get_goal(XYPOS* start_pos){
     goal->xPos=start_pos->xPos;
     goal->yPos=start_pos->yPos;
 
+    free(mat);
     //if max_dist<7 that means all of the avatars are in the cluster
     if (max_dist<7){ 
         //assigning the coordinates as a goal that should be in the middle
         //of all of the avatars
         goal->xPos=avatar_list[index/2]->xPos;
         goal->yPos=avatar_list[index/2]->yPos;
+
+        for (int j=0;j<index;j++){
+            free(avatar_list[j]);
+        }
         return goal;
     }
 
@@ -689,17 +714,24 @@ shared_map* get_shared_map(){
     return sh_map;
 }
 
-//void update_graphics(){
-//   matrix* mat=convert_map();
-// matrix* data;
-//for (int i=0;i<mat->row;i++){
-//	for (int j=0;j<mat->column;j++){
-//	    data->matrix[i][j]=mat->matrix[i][j];
-//	}
-//   }
+// Called each time to update the graphics map
+void update_graphics(){
 
-//}
+    // Convert the shared map into the 2D char array in matrix
+    // struct form
+    matrix* graphics_map = convert_map();
 
+    data_row_length = graphics_map->row;
+    data_column_length = graphics_map->column;
+
+    // Move the 2D char array map into the global 2D char array
+    // Graphics will use this to render
+    for (int i = 0; i < graphics_map->row; i++){
+        for (int j = 0; j < graphics_map->column; j++){
+            data2[i][j] = graphics_map->matrix[i][j];
+        }
+    }
+}
 
 //function to free shared memory segments
 void free_shared_memory(){
@@ -727,39 +759,3 @@ void free_shared_memory(){
     }
 
 }
-
-// Called each time to update the graphics map
-void update_graphics(){
-
-    /*printf("\n 1 ***** \n");*/
-    // retrieve the struct from the converted map
-    matrix* graphics_map = convert_map();
-
-    /*printf("\n 1.5 ***** \n");*/
-
-
-    // Create the global struct that is used for the graphics map
-    /*data->row = graphics_map->row;*/
-    /*data->column = graphics_map->column;*/
-
-    data_row_length = graphics_map->row;
-    data_column_length = graphics_map->column;
-
-    /*printf("\n 2 ***** \n");*/
-
-    /*for (int i = 0; i < DIM; i++){*/
-    /*for (int j = 0; j < DIM; j++){*/
-    /*data[i][j] = '\0';*/
-    /*}*/
-    /*}*/
-
-    for (int i = 0; i < graphics_map->row; i++){
-        for (int j = 0; j < graphics_map->column; j++){
-            /*data->matrix[i][j] = graphics_map->matrix[i][j];*/
-            data2[i][j] = graphics_map->matrix[i][j];
-            /*printf("%c ", data2[i][j]);*/
-        }
-        /*printf("\n");*/
-    }
-}
-

@@ -83,7 +83,6 @@ void update_graphics();
 void* start_graphics(void* ptr);
 
 
-
 //PROTOTYPES: bfs.c related functions
 
 // Enqueues the queue with the newly created cell object
@@ -111,7 +110,7 @@ cell* init_cell(int x,int y,int d,int mark,cell* parent);
 void free_queue(queue* q);
 
 // Frees all of the elements and their parents in the queue
-void free_queue_advanced(queue* q);
+void free_queue_advanced(queue* q1,queue* q2);
 
 // Checks whether the queue contains some specific coordinates already. Returns 1 if it does, 0 otherwise
 int contains(queue* q,int x,int y);
