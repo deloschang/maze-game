@@ -5,12 +5,6 @@
 #define DIM 1000
 #define MAX_MOVE_DIM 200000
 
-typedef struct _matrix {
-     int row;
-     int column;
-     char matrix[DIM][DIM];
-} matrix;
-
 //DATA STRUCTURES
 
 // Matrix. This data structure holds a 2-dimensional array that represents the maze, and the dimensions 

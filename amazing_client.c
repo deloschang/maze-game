@@ -42,6 +42,9 @@
 #include <sys/sem.h>
 #include "semun.h"
 
+#include <gtk/gtk.h> // for gtk functionality
+#include <pthread.h>
+
 /**
  * start_graphics
  * Starts the graphics by rendering the maze
@@ -717,6 +720,24 @@ shared_map* get_shared_map(){
 }
 
 
+// Called each time to update the graphics map
+void update_graphics(){
+
+    // Convert the shared map into the 2D char array in matrix
+    // struct form
+    matrix* graphics_map = convert_map();
+
+    data_row_length = graphics_map->row;
+    data_column_length = graphics_map->column;
+
+    // Move the 2D char array map into the global 2D char array
+    // Graphics will use this to render
+    for (int i = 0; i < graphics_map->row; i++){
+        for (int j = 0; j < graphics_map->column; j++){
+            data2[i][j] = graphics_map->matrix[i][j];
+        }
+    }
+}
 
 //function to free shared memory segments
 void free_shared_memory(){
