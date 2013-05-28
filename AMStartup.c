@@ -213,10 +213,8 @@ int main(int argc,char* argv[]){
         avatar_id++;
     }
     //waits a little bit for children to terminate
-    system("sleep 7");
+    system("sleep 1");
     return 0;
-
-
 
 }
 

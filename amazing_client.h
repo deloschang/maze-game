@@ -11,6 +11,7 @@
 //#endif
 
 #define DIM 400
+#define MAX_MOVE_DIM 100000
 
 //DATA STRUCTURES
 
