@@ -5,9 +5,23 @@ separate server application
 
 See Design Document PDF for more details
 
+TO RUN -->
+    - run "make" 
+    - run AMStartup which will start the avatar clients
+        - e.g. ./AMStartup -n 3 -d 3 -h stratton.cs.dartmouth.edu for 3 Avatars on Difficulty 3
 * Note
     - Results/ contains all the logs 
     - Utils/ contains the LIBRARY and the mutual .c and .h files for better refactoring
+    - In the graphics, it *appears* that the Avatar is jumping multiple spots at a time, 
+        Or jumping the "wall". This is not a pathing error.
+        But this is because the processes are running faster than the graphics renders them 
+        due to the relatively slow UPDATE_INTERVAL (1 sec). 
+
+    - When the maze is solved, it will output a "Maze Solved !!" message ALONG
+        with the 2D char array representing the currently solved maze. 
+        - When the maze is SOLVED, the Avatars will not completely overlap. They will be next to each other.
+            This was our design decision because it makes it easier to see where the avatars were solved.
+
 
 * Graphics
 To run gtk: gcc -Wall -g helloworld.c -o helloworld `pkg-config --cflags gtk+-2.0 --libs gtk+-2.0`
