@@ -253,7 +253,7 @@ void free_queue_advanced(queue* q1,queue* q2){
   queue* container=malloc(sizeof(queue));
   container->head=NULL;
 
-  cell* free_list[1000];
+  cell* free_list[200000];
   int free_index=0;
   queue* q;
   for (int i=0;i<2;i++){

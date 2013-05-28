@@ -79,7 +79,9 @@ int main(int argc,char* argv[]){
     int sockfd;
     struct sockaddr_in servaddr;
     AM_MESSAGE* sendline=malloc(sizeof(AM_MESSAGE));
+    BZERO(sendline,sizeof(AM_MESSAGE));
     AM_MESSAGE* recvline=malloc(sizeof(AM_MESSAGE));
+    BZERO(recvline,sizeof(AM_MESSAGE));
     MALLOC_CHECK(sendline);
     MALLOC_CHECK(recvline);
     
@@ -158,8 +160,9 @@ int main(int argc,char* argv[]){
     XYPOS* new_pos=malloc(sizeof(XYPOS));
     
     
-    int path[500];//this variable will store integers representing which path
-		  //the avatar should take
+    int path[MAX_MOVE_DIM];//this variable will 
+			  //store integers representing which path
+		  	  //the avatar should take
     int path_count=0;
     
      //main loop where we solve the maze
@@ -176,7 +179,7 @@ int main(int argc,char* argv[]){
 	   matrix* mat=convert_map();
 
 	   //resetting the path for the avatar
-	   for (int l=0;l<500;l++){
+	   for (int l=0;l<MAX_MOVE_DIM;l++){
 		path[l]=-5;
 	   }
 	   //get_goal serves as a function to determine optimal
@@ -184,7 +187,6 @@ int main(int argc,char* argv[]){
 	   //two closest avatars. However in case they are close to each other
 	   //some fixed point is returned
 	   goal=get_goal(cur_pos);
-	   
 	   find_path(mat,cur_pos,goal,path);//calling bfs function to
 					    //construct a path
 	   path_count=0;
@@ -197,6 +199,8 @@ int main(int argc,char* argv[]){
 	   next_move=path[path_count];
 
 	   //sending message to the server to move
+	   BZERO(sendline,sizeof(AM_MESSAGE));
+ 	   BZERO(recvline,sizeof(AM_MESSAGE));
 	   sendline->message_type=htonl(AM_AVATAR_MOVE);
 	   sendline->msg.avatar_move.AvatarId=htonl(avatar_id);
 	   sendline->msg.avatar_move.Direction=htonl(next_move);
@@ -518,7 +522,7 @@ void mark_as_wall(XYPOS* wall){
 //the same avatar will be used as a goal for all of the other avatars
 XYPOS* get_goal(XYPOS* start_pos){
      matrix* mat=convert_map();
-     int path[500];
+     int path[MAX_MOVE_DIM];
      XYPOS* avatar_list[10];
      int index=0;
      for (int i=0;i<mat->row;i++){
@@ -535,19 +539,18 @@ XYPOS* get_goal(XYPOS* start_pos){
 	}
      }
      //free(mat);
-	
      //portion of the function to compute max and min distances between
      //the avatars
      int max_dist=-10000;
      int min_dist=10000;
-     int min_path[500];
+     int min_path[MAX_MOVE_DIM];
      //int min_avatar;
      //int max_avatar;
 
      int counter=0;//variable that will measure the distance between 2 avatars
      for (int i=0;i<index;i++){
 	     //resetting the path
-	     for (int k=0;k<500;k++){
+	     for (int k=0;k<MAX_MOVE_DIM;k++){
 		path[k]=-5;
 	     }
 	     //only updating this if the avatar is not equal to itself or
@@ -556,14 +559,14 @@ XYPOS* get_goal(XYPOS* start_pos){
 		avatar_list[i]->xPos != start_pos->xPos){
 	          find_path(mat,start_pos,avatar_list[i],path);
 	          counter=0;
-	          while (path[counter]!=-5 && counter<500){
+	          while (path[counter]!=-5 && counter<MAX_MOVE_DIM){
 		     counter++;//counting the distance between two avatrs
 	          }
 	          if (counter<min_dist){//updating new min distance
 					//if condition was sattisfied
 		     min_dist=counter;
 		     //min_avatar=i;
-		     for (int k=0;k<500;k++){
+		     for (int k=0;k<MAX_MOVE_DIM;k++){
 		        min_path[k]=-5;
 		     }
 		     for (int k=0;k<counter;k++){
@@ -578,6 +581,7 @@ XYPOS* get_goal(XYPOS* start_pos){
 	    }
 
      }
+    
      //finally initializing what goal should be
      XYPOS* goal=malloc(sizeof(XYPOS));
      goal->xPos=start_pos->xPos;
@@ -585,7 +589,7 @@ XYPOS* get_goal(XYPOS* start_pos){
      
      free(mat);
      //if max_dist<7 that means all of the avatars are in the cluster
-     if (max_dist<7){ 
+     if (max_dist<10){ 
 	//assigning the coordinates as a goal that should be in the middle
 	//of all of the avatars
 	goal->xPos=avatar_list[index/2]->xPos;

@@ -10,7 +10,8 @@
   //  };
 //#endif
 
-#define DIM 400
+#define DIM 1000
+#define MAX_MOVE_DIM 200000
 
 typedef struct _matrix {
      int row;
