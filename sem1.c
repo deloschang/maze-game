@@ -43,8 +43,7 @@ int set_semvalue(int sem_id){
 void del_semvalue(int sem_id){
     union semun sem_union;
     
-    if (semctl(sem_id, 0, IPC_RMID, sem_union) == -1)
-        fprintf(stderr, "Failed to delete semaphore\n");
+    if (semctl(sem_id, 0, IPC_RMID, sem_union) == -1){ }
 }
 
 /* semaphore_p changes the semaphore by -1 (waiting). */

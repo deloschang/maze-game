@@ -156,7 +156,6 @@ int main(int argc,char* argv[]){
     //using the semaphore to modify our shared map (segment of shared memory)
 
     if (!semaphore_p(sem_id)){
-        printf("semaphore p failed\n");
         exit(1);
     }
     sleep(rand() % 2);
@@ -164,7 +163,6 @@ int main(int argc,char* argv[]){
     update_shared_map(NULL,init_pos,empty_param,empty_param,0);
 
     if (!semaphore_v(sem_id)){//releasing the semaphore
-        printf("semaphore v failed\n");
         exit(1);
     } 
 
@@ -755,12 +753,10 @@ void free_shared_memory(){
     shared_memory=shmat(shmid,(void*)0,0);
 
     if (shmdt(shared_memory)==-1){
-        printf("shmdt failed\n");
         exit(1);
     }
 
     if (shmctl(shmid,IPC_RMID,0)==-1){
-        printf("shmctl failed\n");
         exit(1);
     }
 
