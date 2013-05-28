@@ -21,6 +21,7 @@ graphics
 algo
 amazing_client
 startup
+AMStartup
 *.exe
 *.out
 *.app

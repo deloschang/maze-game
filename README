@@ -5,6 +5,10 @@ separate server application
 
 See Design Document PDF for more details
 
+* Note
+    - Results/ contains all the logs 
+    - Utils/ contains the LIBRARY and the mutual .c and .h files for better refactoring
+
 * Graphics
 To run gtk: gcc -Wall -g helloworld.c -o helloworld `pkg-config --cflags gtk+-2.0 --libs gtk+-2.0`
 To run with X11 forwarding (to enable graphics): ssh -Y -l user@server 

@@ -57,9 +57,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "amazing.h"
-#include "amazing_client.h"
-#include "header.h"
+#include "utils/amazing.h"
+#include "utils/amazing_client.h"
+#include "utils/header.h"
 
 // Useful MACROS for controlling the unit tests.
 
