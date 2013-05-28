@@ -3,11 +3,44 @@ Description: a client application that simulates you and your friends
 searching for each other in a maze that is generated and managed by a 
 separate server application
 
-* Design Document
-https://docs.google.com/document/d/1liLgbe2dfsxfEU9_kA6Hfkgkyt4Rrxg-kqYBduhPRG0/edit
+See Design Document PDF for more details
 
-* Troubleshooting
+* Graphics
 To run gtk: gcc -Wall -g helloworld.c -o helloworld `pkg-config --cflags gtk+-2.0 --libs gtk+-2.0`
 To run with X11 forwarding (to enable graphics): ssh -Y -l user@server 
+
+File Directory:
+├── amazing_client.c
+├── amazing_client.h
+├── amazing.h
+├── AMStartup.c
+├── AMStartup.h
+├── bfs.c
+├── cleansharedmem.sh
+├── graphics.c
+├── graphics.h
+├── header.h
+├── Makefile
+├── mazedesign.pdf
+├── README
+├── results
+│   ├── Amazing_dfchang_2_0.log
+│   ├── Amazing_dfchang_3_3.log
+│   ├── Amazing_dfchang_4_3.log
+│   ├── Amazing_dfchang_4_6.log
+│   ├── Amazing_dfchang_5_3.log
+│   ├── Amazing_dfchang_5_5.log
+│   └── Amazing_dfchang_9_3.log
+├── sem1.c
+├── semun.h
+└── unit_test.c
+
+File Descriptions:
+amazing_client.c :  main file for interacting with the server and getting received messages. 
+                    Updates the shared map between all the avatars and calls the algorithm
+bfs.c            :  main algorithm using the modified BFS to calculate the direction to move
+graphics.c       :  main function for updating the graphics using the shared map
+sem1.c           :  main file for accessing semaphore methods etc.
+unit_test.c      :  unit testing file 
 
 
