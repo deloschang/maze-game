@@ -2,16 +2,14 @@
 
 //#else
 
- //   union semun{
-//	int val;
-//	struct semid_ds *buf;
-//	unsigned short int *array;
-//	struct seminfo *__buf;
-  //  };
-//#endif
+#define DIM 1000
+#define MAX_MOVE_DIM 200000
 
-#define DIM 400
-#define MAX_MOVE_DIM 100000
+typedef struct _matrix {
+     int row;
+     int column;
+     char matrix[DIM][DIM];
+} matrix;
 
 //DATA STRUCTURES
 

@@ -42,8 +42,6 @@
 #include <sys/sem.h>
 #include "semun.h"
 
-#include <gtk/gtk.h> // for gtk functionality
-#include <pthread.h>
 /**
  * start_graphics
  * Starts the graphics by rendering the maze
@@ -58,6 +56,7 @@ extern int data_column_length;
 
 //amazing client that starts avatar process and guides it through the 
 //connection with the server to solve the maze using boosted bfs algorithm.
+
 int main(int argc,char* argv[]){
 
     int avatar_id=atoi(argv[1]);
@@ -84,6 +83,7 @@ int main(int argc,char* argv[]){
                     "pthread_create failed, rc=%d\n",iret1);
             exit(iret1);
         }
+        
 
     }else{//other avatars get it after avatar 0 creates it
         system("sleep 1");
@@ -105,11 +105,9 @@ int main(int argc,char* argv[]){
     int sockfd;
     struct sockaddr_in servaddr;
     AM_MESSAGE* sendline=malloc(sizeof(AM_MESSAGE));
-    BZERO(sendline, sizeof(AM_MESSAGE));
-
+    BZERO(sendline,sizeof(AM_MESSAGE));
     AM_MESSAGE* recvline=malloc(sizeof(AM_MESSAGE));
-    BZERO(recvline, sizeof(AM_MESSAGE));
-
+    BZERO(recvline,sizeof(AM_MESSAGE));
     MALLOC_CHECK(sendline);
     MALLOC_CHECK(recvline);
 
@@ -188,7 +186,8 @@ int main(int argc,char* argv[]){
     XYPOS* new_pos=malloc(sizeof(XYPOS));
 
 
-    int path[MAX_MOVE_DIM];//this variable will store integers representing which path
+    int path[MAX_MOVE_DIM];//this variable will 
+    //store integers representing which path
     //the avatar should take
     int path_count=0;
 
@@ -214,7 +213,6 @@ int main(int argc,char* argv[]){
             //two closest avatars. However in case they are close to each other
             //some fixed point is returned
             goal=get_goal(cur_pos);
-
             find_path(mat,cur_pos,goal,path);//calling bfs function to
             //construct a path
             path_count=0;
@@ -226,11 +224,9 @@ int main(int argc,char* argv[]){
 
             next_move=path[path_count];
 
-            // Clear out sendline first
-            BZERO(sendline, sizeof(AM_MESSAGE));
-            BZERO(recvline, sizeof(AM_MESSAGE));
-
             //sending message to the server to move
+            BZERO(sendline,sizeof(AM_MESSAGE));
+            BZERO(recvline,sizeof(AM_MESSAGE));
             sendline->message_type=htonl(AM_AVATAR_MOVE);
             sendline->msg.avatar_move.AvatarId=htonl(avatar_id);
             sendline->msg.avatar_move.Direction=htonl(next_move);
@@ -268,8 +264,10 @@ int main(int argc,char* argv[]){
                     exit(1);
                 }
 
+                condition=0;//and set this variable to 0 so that maze
+                //solving algorithm would stop
 
-                // Updating the map for the very last time
+                //updating the map for the very last time
                 int x_list[AM_MAX_AVATAR];
                 int y_list[AM_MAX_AVATAR];
                 int count=0;
@@ -285,9 +283,6 @@ int main(int argc,char* argv[]){
                 }
                 update_shared_map(cur_pos,new_pos,x_list,y_list
                         ,count);
-
-                condition=0;//and set this variable to 0 so that maze
-                //solving algorithm would stop
 
             }
 
@@ -352,7 +347,6 @@ int main(int argc,char* argv[]){
 
 
                 }
-
                 // New position so update the server
                 update_graphics();
 
@@ -395,7 +389,6 @@ int main(int argc,char* argv[]){
                 system(log_file_msg);
 
                 turn_num=ntohl(recvline->msg.avatar_turn.TurnId);
-
             }else{
                 printf("Maze Solved!!\n");
             }
@@ -543,10 +536,7 @@ matrix* convert_map(){
 }
 
 
-/**
- * mark_as_wall
- * function that adds a wall to our shared map resource
- **/
+//function that adds a wall to our shared map resource
 void mark_as_wall(XYPOS* wall){
     shared_map* sh_map=get_shared_map();
     sh_map->map[(wall->yPos)][(wall->xPos)]=1;
@@ -578,7 +568,6 @@ XYPOS* get_goal(XYPOS* start_pos){
         }
     }
     //free(mat);
-
     //portion of the function to compute max and min distances between
     //the avatars
     int max_dist=-10000;
@@ -621,6 +610,7 @@ XYPOS* get_goal(XYPOS* start_pos){
         }
 
     }
+
     //finally initializing what goal should be
     XYPOS* goal=malloc(sizeof(XYPOS));
     goal->xPos=start_pos->xPos;
@@ -628,7 +618,7 @@ XYPOS* get_goal(XYPOS* start_pos){
 
     free(mat);
     //if max_dist<7 that means all of the avatars are in the cluster
-    if (max_dist<7){ 
+    if (max_dist<10){ 
         //assigning the coordinates as a goal that should be in the middle
         //of all of the avatars
         goal->xPos=avatar_list[index/2]->xPos;
@@ -666,10 +656,7 @@ XYPOS* get_goal(XYPOS* start_pos){
 
 }
 
-/**
- * update_shared_map
- * function that updates shared map resource with the new positions
- **/
+//function that updates shared map resource with the new positions
 void update_shared_map(XYPOS* old, XYPOS *new, int x_cords[],
         int y_cords[],int counter){
 
@@ -699,15 +686,12 @@ void update_shared_map(XYPOS* old, XYPOS *new, int x_cords[],
         sh_map->map[(new->yPos)*2][(new->xPos)*2]=7;//upating new postion
 
         //NOTE: we need to multiple by 2 because our representation of the
-        //map is double the size of the original map
+        //map is doube the size of the original map
     }
 
 }
 
-/**
- * get_shared_map
- * function that retrieves shared map from the shared memory segment
- **/
+//function that retrieves shared map from the shared memory segment
 shared_map* get_shared_map(){
     void *shared_memory=(void*)0;
     shared_map *sh_map;
@@ -732,24 +716,7 @@ shared_map* get_shared_map(){
     return sh_map;
 }
 
-// Called each time to update the graphics map
-void update_graphics(){
 
-    // Convert the shared map into the 2D char array in matrix
-    // struct form
-    matrix* graphics_map = convert_map();
-
-    data_row_length = graphics_map->row;
-    data_column_length = graphics_map->column;
-
-    // Move the 2D char array map into the global 2D char array
-    // Graphics will use this to render
-    for (int i = 0; i < graphics_map->row; i++){
-        for (int j = 0; j < graphics_map->column; j++){
-            data2[i][j] = graphics_map->matrix[i][j];
-        }
-    }
-}
 
 //function to free shared memory segments
 void free_shared_memory(){
@@ -777,3 +744,4 @@ void free_shared_memory(){
     }
 
 }
+
