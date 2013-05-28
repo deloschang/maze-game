@@ -48,7 +48,7 @@ GtkWidget *main_window,
  **/
 static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *data){
     int i, j, width, height, maze_width, maze_column, x, y, flag;
-    double value, convert_step_x, convert_step_y;
+    double convert_step_x, convert_step_y;
     char field;
     cairo_t *cr;
 
@@ -79,10 +79,9 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
 
             // Setting color
             /*value = g_random_double ();*/
-            /*cairo_set_source_rgb (cr, value, value, value);*/
+            cairo_set_source_rgb (cr, 0.5, 0.5, 1);
 
             // Parse the 2D Array
-            /*field = ((matrix*)data)->matrix[i][j];*/
             field = data2[i][j];
 
             if ( field == 'E'){
@@ -108,13 +107,14 @@ static gboolean cb_expose (GtkWidget *area, GdkEventExpose *event, gpointer *dat
                 }
             } else if ( field == 'A'){
                 // Draw the avatar
-                // Temporary rectangle / change later
-
+                cairo_set_source_rgb (cr, 0, 0, 0);
                 cairo_rectangle (cr, x + (convert_step_x / 4), 
                         y + (convert_step_y / 4), 
                         convert_step_x - (convert_step_x / 3), 
                         convert_step_y - (convert_step_y / 3));
+
                 cairo_fill (cr);
+                cairo_set_source_rgb (cr, 0.5, 0.5, 1);
 
                 x += convert_step_x;
             }
@@ -181,42 +181,3 @@ void render_maze(){
     // Clean up
     g_source_remove(timer);
 }
-
-
-
-/**
- * Graphics unit test to check whether the graphical window can be loaded
- **/
-/*int main(int argc, char **argv){*/
-/*[>[>(1) Init the GTK with arguments<]<]*/
-/*gtk_init (&argc, &argv);*/
-
-/*[>[>Example use of the Matrix Structure<]<]*/
-/*data = malloc(sizeof(matrix));*/
-/*data->row = LEVEL_0_ROWS;*/
-/*data->column = LEVEL_0_COLUMNS;*/
-/*[>data->matrix = A;<]*/
-
-/*matrix* A = malloc(sizeof(matrix));*/
-/*A->row = LEVEL_0_ROWS;*/
-/*A->column = LEVEL_0_COLUMNS;*/
-
-/*for (int i = 0; i < A->row; i++){*/
-/*for (int j = 0; j < A->column; j++){*/
-/*A->matrix[i][j] = Array[i][j];*/
-/*}*/
-/*}*/
-
-/*for (int i = 0; i < data->row; i++){*/
-/*for (int j = 0; j < data->column; j++){*/
-/*data->matrix[i][j] = A->matrix[i][j];*/
-/*}*/
-/*}*/
-
-
-/*[>(2) Start the maze that takes from the global MAZE<]*/
-/*render_maze();*/
-
-
-/*return 0;*/
-/*}*/

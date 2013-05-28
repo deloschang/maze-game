@@ -44,8 +44,6 @@
 
 #include <gtk/gtk.h> // for gtk functionality
 #include <pthread.h>
-
-
 /**
  * start_graphics
  * Starts the graphics by rendering the maze
@@ -107,7 +105,11 @@ int main(int argc,char* argv[]){
     int sockfd;
     struct sockaddr_in servaddr;
     AM_MESSAGE* sendline=malloc(sizeof(AM_MESSAGE));
+    BZERO(sendline, sizeof(AM_MESSAGE));
+
     AM_MESSAGE* recvline=malloc(sizeof(AM_MESSAGE));
+    BZERO(recvline, sizeof(AM_MESSAGE));
+
     MALLOC_CHECK(sendline);
     MALLOC_CHECK(recvline);
 
@@ -223,6 +225,10 @@ int main(int argc,char* argv[]){
             int next_move;
 
             next_move=path[path_count];
+
+            // Clear out sendline first
+            BZERO(sendline, sizeof(AM_MESSAGE));
+            BZERO(recvline, sizeof(AM_MESSAGE));
 
             //sending message to the server to move
             sendline->message_type=htonl(AM_AVATAR_MOVE);

@@ -10,6 +10,11 @@ SRCS = amazing_client.c bfs.c header.h sem1.c semun.h graphics.c
 EXEC2 = AMStartup
 OBJS2 = AMStartup.c
 
+# unit test details
+EXEC3 = unit_test
+OBJS3 = unit_test.o graphics.o bfs.o
+SRCS3 = unit_test.c graphics.c bfs.c
+
 #amazing_client: amazing_client.c amazing_client.h bfs.c header.h sem1.c semun.h graphics.c 
 	#$(CC) $(CFLAGS) -g -D_SVID_SOURCE=1 -o amazing_client amazing_client.c bfs.c sem1.c graphics.c $(PKGFLAGS)
 	#./AMStartup -n 3 -d 3 -h kancamagus.cs.dartmouth.edu
@@ -34,6 +39,10 @@ $(OBJS): $(SRCS)
 	$(CC) $(CFLAGS) $(SVIDFLAGS) -c $(SRCS) $(PKGFLAGS)
 	#$(CC) $(CFLAGS) -c $(SRCS4) $(PKGFLAGS)
 
+unit: $(SRCS3) 
+	$(CC) $(CFLAGS) $(SVIDFLAGS) -c $(SRCS3) $(PKGFLAGS)
+	$(CC) $(CFLAGS) $(SVIDFLAGS) -o $(EXEC3) $(OBJS3) $(PKGFLAGS)
+
 clean:
 	rm -f *~
 	rm -f *#
@@ -47,6 +56,7 @@ clean:
 	rm -f AMStartup
 	rm -f algo
 	rm -f amazing_client
+	rm -f unit_test
 
 cleanlog:
 	rm -f *.log
