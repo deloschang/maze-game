@@ -43,4 +43,7 @@ graphics.c       :  main function for updating the graphics using the shared map
 sem1.c           :  main file for accessing semaphore methods etc.
 unit_test.c      :  unit testing file 
 
+Extra Credit Option:
+ * Interprocess communication -- we are using shared memory and semaphores
 
+ 

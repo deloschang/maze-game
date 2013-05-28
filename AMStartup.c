@@ -28,9 +28,9 @@
 #include <netdb.h>
 #include <string.h>
 #include <arpa/inet.h>
-#include "amazing.h"
+#include "utils/amazing.h"
 #include "AMStartup.h"
-#include "header.h"
+#include "utils/header.h"
 #include <time.h>
 #include <ctype.h>
 #include <unistd.h>

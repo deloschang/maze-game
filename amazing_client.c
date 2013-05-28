@@ -35,13 +35,12 @@
 #include <arpa/inet.h>
 #include "AMStartup.h"
 #include <sys/shm.h>
-#include "amazing.h"
-#include "amazing_client.h"
+#include "utils/amazing.h"
+#include "utils/amazing_client.h"
 #include <unistd.h>
-#include "header.h"
+#include "utils/header.h"
 #include <sys/sem.h>
-#include "semun.h"
-
+#include "utils/semun.h"
 #include <gtk/gtk.h> // for gtk functionality
 #include <pthread.h>
 
@@ -53,13 +52,14 @@ void* start_graphics(void *ptr){
     render_maze();
     return NULL;
 }
+
 extern char data2[DIM][DIM];
 extern int data_row_length;
 extern int data_column_length;
 
+
 //amazing client that starts avatar process and guides it through the 
 //connection with the server to solve the maze using boosted bfs algorithm.
-
 int main(int argc,char* argv[]){
 
     int avatar_id=atoi(argv[1]);
